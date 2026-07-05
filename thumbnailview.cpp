@@ -58,7 +58,7 @@ void ThumbnailView::drawItems(QPainter *painter,
         if (!items[i]->isVisible())
             continue;
 
-        auto handle = dynamic_cast<GraphView::Handles::AbstractHandle *>(items[i]);
+        auto handle = dynamic_cast<GraphView::AbstractHandle *>(items[i]);
         if (handle)
             continue;
 

@@ -5,21 +5,21 @@
 
 #include <QGraphicsSceneMouseEvent>
 
-namespace GraphView::Tools
+namespace GraphView
 {
 
-CreatePolyline::CreatePolyline(Scene *scene)
+CreatePolylineTool::CreatePolylineTool(Scene *scene)
     : AbstractTool{scene}
 {
 }
 
-void CreatePolyline::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
+void CreatePolylineTool::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (Q_UNLIKELY(!_item)) {
         if (_creator)
             _item = _creator();
         else {
-            _item = new Widgets::PolylineItem;
+            _item = new PolylineItem;
             _scene->addItem(_item);
         }
     }
@@ -31,17 +31,17 @@ void CreatePolyline::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
     }
 }
 
-QString CreatePolyline::text() const
+QString CreatePolylineTool::text() const
 {
     return "Create polyline";
 }
 
-void CreatePolyline::setCreator(const std::function<Widgets::PolylineItem *()> &newCreator)
+void CreatePolylineTool::setCreator(const std::function<PolylineItem *()> &newCreator)
 {
     _creator = newCreator;
 }
 
-AbstractTool::ToolType CreatePolyline::toolType() const
+AbstractTool::ToolType CreatePolylineTool::toolType() const
 {
     return AbstractTool::ToolType::RequireActivation;
 }

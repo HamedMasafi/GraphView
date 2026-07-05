@@ -57,12 +57,12 @@ Scene::Scene(QObject *parent)
     addItem(dd->relationRect);
     dd->relationRect->hide();
 
-    dd->relationPreview = new Widgets::Relation;
+    dd->relationPreview = new RelationWidget;
     addItem(dd->relationPreview);
     dd->relationPreview->hide();
 
-    //    dd->resizer = new Widgets::WidgetResizer{this};
-    //    connect(dd->resizer, &Widgets::WidgetResizer::resized, this, &Scene::widgets_resized);
+    //    dd->resizer = new WidgetResizer{this};
+    //    connect(dd->resizer, &WidgetResizer::resized, this, &Scene::widgets_resized);
 
     setSceneRect(QRectF{0, 0, 1000, 800});
 
@@ -222,7 +222,7 @@ void Scene::dropEvent(QGraphicsSceneDragDropEvent *event)
     // auto h= m.captured(3);
 
     if (!dd->dragCreator.isEmpty()) {
-        auto cmd = new Commands::AddWidget{dd.data(),
+        auto cmd = new AddWidgetCommand{dd.data(),
                                            QRectF{snapPoint(event->scenePos()),
                                                   dd->dragRect->rect().size()},
                                            dd->dragCreator};
@@ -413,18 +413,18 @@ void Scene::widgets_resized()
 
 void Scene::widget_doubleClicked()
 {
-    auto s = qobject_cast<Widgets::AbstractWidget *>(sender());
+    auto s = qobject_cast<AbstractWidget *>(sender());
     if (s)
         Q_EMIT widgetDoubleClicked(s);
 }
 
-void Scene::selectWidget(Widgets::AbstractWidget *s)
+void Scene::selectWidget(AbstractWidget *s)
 {
     //    _resizer->setActiveItem(s);
     dd->selectedWidget = s;
 }
 
-void Scene::registerTool(Tools::AbstractTool *tool)
+void Scene::registerTool(AbstractTool *tool)
 {
     tool->setScene(this);
     tool->setParent(this);
@@ -432,18 +432,18 @@ void Scene::registerTool(Tools::AbstractTool *tool)
         tool->setView(dd->view);
 
     switch (tool->toolType()) {
-    case Tools::AbstractTool::ToolType::RequireActivation:
+    case AbstractTool::ToolType::RequireActivation:
         dd->readyTools << tool;
         break;
-    case Tools::AbstractTool::ToolType::AlwaysListener:
+    case AbstractTool::ToolType::AlwaysListener:
         dd->shadowTools << tool;
         break;
-        // case Tools::AbstractTool::ToolType::OnDemand:
+        // case AbstractTool::ToolType::OnDemand:
         // break;
     }
 
     dd->toolNames.insert(tool->metaObject()->className(), tool);
-    connect(tool, &Tools::AbstractTool::finished, this, &Scene::slotToolFinished);
+    connect(tool, &AbstractTool::finished, this, &Scene::slotToolFinished);
 }
 
 void Scene::beginDragDrop(const QString &className, const QSizeF &size)
@@ -476,7 +476,7 @@ QDrag *Scene::createDrag(const QString &className, const QSizeF &size)
 
 void Scene::widget_selectedChanged()
 {
-    //    auto s = qobject_cast<Widgets::AbstractWidget *>(sender());
+    //    auto s = qobject_cast<AbstractWidget *>(sender());
     //    if (s) {
     //        selectWidget(s);
     //    }
@@ -484,27 +484,27 @@ void Scene::widget_selectedChanged()
 
 void Scene::widget_moved(QPointF lastPos)
 {
-    auto s = qobject_cast<Widgets::AbstractWidget *>(sender());
+    auto s = qobject_cast<AbstractWidget *>(sender());
     if (!s)
         return;
 
     Q_EMIT widgetMoved(s, lastPos, s->pos());
 }
 
-void Scene::setNameForWidget(Widgets::AbstractWidget *widget, bool force)
+void Scene::setNameForWidget(AbstractWidget *widget, bool force)
 {
     dd->setNameForWidgetShort(widget, force);
 }
 
 void Scene::initBasicCommands()
 {
-    // registerTool<Tools::ConnectWidgets>(Ready);
-    // registerTool<Tools::ResizeWidget>(Ready);
-    // registerTool<Tools::ResizeHandlesProvider>(Ready);
-    // registerTool<Tools::WidgetMove>(Ready);
-    // registerTool<Tools::EditRelation>(Ready);
-    // registerTool<Tools::Zoom>(Shadow);
-    // registerTool<Tools::ItemRemover>(Shadow);
+    // registerTool<ConnectWidgetsTool>(Ready);
+    // registerTool<ResizeWidgetTool>(Ready);
+    // registerTool<ResizeHandlesProviderTool>(Ready);
+    // registerTool<WidgetMoveTool>(Ready);
+    // registerTool<EditRelationTool>(Ready);
+    // registerTool<ZoomTool>(Shadow);
+    // registerTool<ItemRemoverTool>(Shadow);
 }
 
 void Scene::createTooltipItem()
@@ -522,12 +522,12 @@ void Scene::createTooltipItem()
     dd->tooltipText->hide();
 }
 
-QList<Widgets::AbstractWidget *> Scene::selectedWidgets() const
+QList<AbstractWidget *> Scene::selectedWidgets() const
 {
-    QList<Widgets::AbstractWidget *> ret;
+    QList<AbstractWidget *> ret;
     auto items = selectedItems();
     for (auto &item : items) {
-        auto w = dynamic_cast<Widgets::AbstractWidget *>(item);
+        auto w = dynamic_cast<AbstractWidget *>(item);
         if (w)
             ret << w;
     }
@@ -545,12 +545,12 @@ void Scene::pushCommand(QUndoCommand *cmd)
     setIsModified(true);
 }
 
-QList<Widgets::AbstractWidget *> Scene::allWidgets() const
+QList<AbstractWidget *> Scene::allWidgets() const
 {
-    QList<Widgets::AbstractWidget *> ret;
+    QList<AbstractWidget *> ret;
     auto items = this->items();
     for (auto &item : items) {
-        auto w = dynamic_cast<Widgets::AbstractWidget *>(item);
+        auto w = dynamic_cast<AbstractWidget *>(item);
         if (w)
             ret << w;
     }
@@ -579,12 +579,12 @@ void Scene::setView(GraphView::View *newView)
     }
 }
 
-Tools::AbstractTool *Scene::activeTool() const
+AbstractTool *Scene::activeTool() const
 {
     return dd->tool;
 }
 
-Tools::AbstractTool *Scene::tool(const QString &name) const
+AbstractTool *Scene::tool(const QString &name) const
 {
     return dd->toolNames[name];
 }
@@ -746,7 +746,7 @@ void Scene::alignSelectedWidgets(AlignMode mode)
     setIsModified(true);
 }
 
-void Scene::setTool(Tools::AbstractTool *newTool)
+void Scene::setTool(AbstractTool *newTool)
 {
     if (dd->tool)
         dd->tool->deactivate();
@@ -762,7 +762,7 @@ void Scene::setTool(const QString &className)
     setTool(dd->toolNames[className]);
 }
 
-QList<Widgets::Relation *> Scene::relations() const
+QList<RelationWidget *> Scene::relations() const
 {
     return dd->relations;
 }
@@ -872,7 +872,7 @@ void Scene::hideTooltip()
 //    painter->drawRect(rc);
 //}
 
-QList<Widgets::AbstractWidget *> Scene::widgets() const
+QList<AbstractWidget *> Scene::widgets() const
 {
     return dd->widgets;
 }
@@ -895,7 +895,7 @@ QPointF Scene::snapPoint(const QPointF &pt) const
     return QPointF(x, y);
 }
 
-void Scene::addWidget(Widgets::AbstractWidget *widget)
+void Scene::addWidget(AbstractWidget *widget)
 {
     setNameForWidget(widget);
     widget->setZValue(Z::Widgets);
@@ -903,24 +903,24 @@ void Scene::addWidget(Widgets::AbstractWidget *widget)
     dd->widgets.append(widget);
     dd->widgetsById.insert(widget->id(), widget);
     addItem(widget);
-    connect(widget, &Widgets::AbstractWidget::doubleClicked, this, &Scene::widget_doubleClicked);
-    connect(widget, &Widgets::AbstractWidget::moved, this, &Scene::widget_moved);
-    connect(widget, &Widgets::AbstractWidget::selectedChanged, this, &Scene::widget_selectedChanged);
+    connect(widget, &AbstractWidget::doubleClicked, this, &Scene::widget_doubleClicked);
+    connect(widget, &AbstractWidget::moved, this, &Scene::widget_moved);
+    connect(widget, &AbstractWidget::selectedChanged, this, &Scene::widget_selectedChanged);
     setIsModified(true);
 
     emit widgetAdded(widget);
 }
 
-void Scene::addWidgetOnce(Widgets::AbstractWidget *widget)
+void Scene::addWidgetOnce(AbstractWidget *widget)
 {
     auto i = std::find_if(dd->widgets.begin(),
                           dd->widgets.end(),
-                          [&widget](Widgets::AbstractWidget *w) { return w == widget; });
+                          [&widget](AbstractWidget *w) { return w == widget; });
     if (i == dd->widgets.end())
         addWidget(widget);
 }
 
-void Scene::removeWidget(Widgets::AbstractWidget *widget)
+void Scene::removeWidget(AbstractWidget *widget)
 {
     removeItem(widget);
     dd->widgets.removeOne(widget);
@@ -929,13 +929,13 @@ void Scene::removeWidget(Widgets::AbstractWidget *widget)
     // widget->deleteLater();
 }
 
-void Scene::addRelation(Widgets::Relation *relation)
+void Scene::addRelation(RelationWidget *relation)
 {
     addItem(relation);
     dd->relations << relation;
 }
 
-void Scene::removeRelation(Widgets::Relation *relation)
+void Scene::removeRelation(RelationWidget *relation)
 {
     removeItem(relation);
     dd->relations.removeOne(relation);
@@ -1020,14 +1020,14 @@ void Scene::setSnapToGrid(bool newSnapToGrid)
     emit snapToGridChanged();
 }
 
-Widgets::AbstractWidget *Scene::createWidget(const QString &name, const QUuid &id)
+AbstractWidget *Scene::createWidget(const QString &name, const QUuid &id)
 {
     return dd->createWidget(name, id);
 }
 
 void Scene::createWidget(const QString &name, const QRectF &rect, const QUuid &id)
 {
-    auto cmd = new Commands::AddWidgets(dd.data());
+    auto cmd = new AddWidgetsCommand(dd.data());
     cmd->add(name, rect, {}, id);
     dd->undoStack->push(cmd);
     ;
@@ -1069,11 +1069,10 @@ QJsonArray Scene::dumpSelectedWidgets() const
     return arr;
 }
 
-QList<Widgets::AbstractWidget *> Scene::pasteWidgets(const QJsonArray &array)
+QList<AbstractWidget *> Scene::pasteWidgets(const QJsonArray &array)
 {
-    QList<Widgets::AbstractWidget *> ret;
+    QList<AbstractWidget *> ret;
     clearSelection();
-    using namespace Core;
 
     for (const auto &item : array) {
         auto o = item.toObject();
@@ -1090,9 +1089,8 @@ QList<Widgets::AbstractWidget *> Scene::pasteWidgets(const QJsonArray &array)
     return ret;
 }
 
-Widgets::AbstractWidget *Scene::cloneWidget(Widgets::AbstractWidget *widget)
+AbstractWidget *Scene::cloneWidget(AbstractWidget *widget)
 {
-    using namespace Core;
     QJsonObject map;
     widget->saveState(map);
     auto w = dd->createWidget(widget->className());
@@ -1110,7 +1108,7 @@ Widgets::AbstractWidget *Scene::cloneWidget(Widgets::AbstractWidget *widget)
 
 void Scene::cloneSelectedWidgets()
 {
-    auto cmd = new Commands::CloneWidgets{this};
+    auto cmd = new CloneWidgetsCommand{this};
     dd->undoStack->push(cmd);
     // auto data = dumpSelectedWidgets();
     // auto widgets = pasteWidgets(data);
@@ -1127,7 +1125,7 @@ void Scene::cloneSelectedWidgets()
 void Scene::cutSelectedToClipboard()
 {
     copySelectedToClipboard();
-    auto cmd = new Commands::RemoveWidget{this, selectedWidgets()};
+    auto cmd = new RemoveWidgetCommand{this, selectedWidgets()};
     clearSelection();
     pushCommand(cmd);
 }
@@ -1157,7 +1155,7 @@ void Scene::sendSelectedToBack()
     auto selectedWidgets = this->selectedWidgets();
     std::sort(widgets.begin(),
               widgets.end(),
-              [](Widgets::AbstractWidget *w1, Widgets::AbstractWidget *w2) {
+              [](AbstractWidget *w1, AbstractWidget *w2) {
                   if (w1->zValue() == w2->zValue())
                       return true;
                   return w1->zValue() < w2->zValue();
@@ -1181,7 +1179,7 @@ void Scene::bringSelectedToFront()
     auto selectedWidgets = this->selectedWidgets();
     std::sort(widgets.begin(),
               widgets.end(),
-              [](Widgets::AbstractWidget *w1, Widgets::AbstractWidget *w2) {
+              [](AbstractWidget *w1, AbstractWidget *w2) {
                   if (w1->zValue() == w2->zValue())
                       return true;
                   return w1->zValue() < w2->zValue();
@@ -1199,7 +1197,7 @@ void Scene::bringSelectedToFront()
         w->setZValue(z++);
 }
 
-Widgets::AbstractWidget *Scene::widgetById(const QUuid &id) const
+AbstractWidget *Scene::widgetById(const QUuid &id) const
 {
     return dd->widgetsById[id];
 }
@@ -1209,7 +1207,7 @@ ScenePrivate::ScenePrivate(Scene *scene)
     , undoStack{new QUndoStack{scene}}
 {}
 
-Widgets::AbstractWidget *ScenePrivate::createWidget(const QString &name, const QUuid &id)
+AbstractWidget *ScenePrivate::createWidget(const QString &name, const QUuid &id)
 {
     if (!creators.contains(name))
         return nullptr;
@@ -1224,7 +1222,7 @@ Widgets::AbstractWidget *ScenePrivate::createWidget(const QString &name, const Q
     return w;
 }
 
-void ScenePrivate::removeWidget(Widgets::AbstractWidget *widget)
+void ScenePrivate::removeWidget(AbstractWidget *widget)
 {
     scene->removeItem(widget);
     widgets.removeOne(widget);
@@ -1233,7 +1231,7 @@ void ScenePrivate::removeWidget(Widgets::AbstractWidget *widget)
     widget->deleteLater();
 }
 
-void ScenePrivate::setNameForWidget(Widgets::AbstractWidget *widget, bool force)
+void ScenePrivate::setNameForWidget(AbstractWidget *widget, bool force)
 {
     if (!widget->objectName().isEmpty() && !force)
         return;
@@ -1243,7 +1241,7 @@ void ScenePrivate::setNameForWidget(Widgets::AbstractWidget *widget, bool force)
     setNameForWidget(widget, className);
 }
 
-void ScenePrivate::setNameForWidgetShort(Widgets::AbstractWidget *widget, bool force)
+void ScenePrivate::setNameForWidgetShort(AbstractWidget *widget, bool force)
 {
     if (!widget->objectName().isEmpty() && !force)
         return;
@@ -1258,12 +1256,12 @@ void ScenePrivate::setNameForWidgetShort(Widgets::AbstractWidget *widget, bool f
     setNameForWidget(widget, shortName);
 }
 
-void ScenePrivate::setNameForWidget(Widgets::AbstractWidget *widget, const QString &perfix)
+void ScenePrivate::setNameForWidget(AbstractWidget *widget, const QString &perfix)
 {
     QStringList names;
     auto items = scene->items();
     for (auto &item : items) {
-        auto w = dynamic_cast<Widgets::AbstractWidget *>(item);
+        auto w = dynamic_cast<AbstractWidget *>(item);
         if (w)
             names << w->objectName();
     }

@@ -1,6 +1,6 @@
 #include "abstractdata.h"
 
-namespace Data {
+namespace GraphView {
 AbstractData::AbstractData(Type type)
     : _type{type}
 {}
@@ -14,4 +14,4 @@ void AbstractData::sync()
 {
     Q_EMIT reloaded();
 }
-} // namespace Data
+} // namespace GraphView

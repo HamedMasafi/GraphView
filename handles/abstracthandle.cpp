@@ -6,7 +6,7 @@
 #include <QPainter>
 #include <QPalette>
 
-namespace GraphView::Handles {
+namespace GraphView {
 
 constexpr int ResizeHandleSize{10};
 
@@ -112,4 +112,4 @@ void AbstractHandle::paint(QPainter *painter,
     painter->drawEllipse(boundingRect());
 }
 
-} // namespace GraphView::Handles
+} // namespace GraphView

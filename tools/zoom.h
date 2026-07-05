@@ -4,15 +4,13 @@
 
 namespace GraphView
 {
-namespace Tools
-{
 
-class Zoom : public AbstractTool
+class ZoomTool : public AbstractTool
 {
     Q_OBJECT
     Q_PROPERTY(int zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged FINAL)
 public:
-    explicit Zoom(Scene *scene);
+    explicit ZoomTool(Scene *scene);
 
     void wheelEvent(QGraphicsSceneWheelEvent *event) override;
     ToolType toolType() const override;
@@ -27,5 +25,4 @@ private:
     int _zoomLevel{100};
     bool _ctrlPressed{false};
 };
-}
 }

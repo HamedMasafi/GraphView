@@ -5,9 +5,9 @@
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 
-namespace GraphView::Tools
+namespace GraphView
 {
-CreateWidget::CreateWidget(Scene *scene)
+CreateWidgetTool::CreateWidgetTool(Scene *scene)
     : AbstractTool{scene}
 {
     _dragRect = scene->addRect(0, 0, 100, 60);
@@ -15,14 +15,14 @@ CreateWidget::CreateWidget(Scene *scene)
     _cursor = Qt::CrossCursor;
 }
 
-void CreateWidget::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
+void CreateWidgetTool::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
 {
     auto _lastClickPos = _scene->snapPoint(mouseEvent->scenePos());
     _dragRect->setRect(_lastClickPos.x(), _lastClickPos.y(), 0, 0);
     _dragRect->show();
 }
 
-void CreateWidget::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
+void CreateWidgetTool::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
 {
     auto _lastClickPos = mouseEvent->buttonDownScenePos(Qt::LeftButton);
     auto pos = _scene->snapPoint(mouseEvent->scenePos());
@@ -32,7 +32,7 @@ void CreateWidget::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
                        qAbs(pos.y() - _lastClickPos.y()));
 }
 
-void CreateWidget::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
+void CreateWidgetTool::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
 {
     _dragRect->hide();
     auto _lastClickPos = mouseEvent->buttonDownScenePos(Qt::LeftButton);
@@ -43,12 +43,12 @@ void CreateWidget::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
         Q_EMIT createObjectRequested(rc);
 }
 
-QString CreateWidget::text() const
+QString CreateWidgetTool::text() const
 {
     return "Create new widget";
 }
 
-AbstractTool::ToolType CreateWidget::toolType() const
+AbstractTool::ToolType CreateWidgetTool::toolType() const
 {
     return AbstractTool::ToolType::RequireActivation;
 }

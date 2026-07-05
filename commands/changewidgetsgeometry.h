@@ -6,21 +6,18 @@
 
 namespace GraphView {
 class Scene;
-namespace Widgets {
 class AbstractWidget;
-}
 
-namespace Commands {
-class ChangeWidgetsGeometry : public QUndoCommand
+class ChangeWidgetsGeometryCommand : public QUndoCommand
 {
 public:
-    ChangeWidgetsGeometry(GraphView::Scene *scene);
+    ChangeWidgetsGeometryCommand(Scene *scene);
 
     void undo() override;
     void redo() override;
 
-    void addWidget(Widgets::AbstractWidget *widget, const QPointF &from, const QPointF &to);
-    void addWidget(Widgets::AbstractWidget *widget, const QRectF &from, const QRectF &to);
+    void addWidget(AbstractWidget *widget, const QPointF &from, const QPointF &to);
+    void addWidget(AbstractWidget *widget, const QRectF &from, const QRectF &to);
 
 private:
     struct WidgetData
@@ -30,8 +27,7 @@ private:
         QRectF newPos;
     };
     QList<WidgetData> _data;
-    GraphView::Scene *_scene;
+    Scene *_scene;
 };
 
-} // namespace Commands
 } // namespace GraphView

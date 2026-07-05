@@ -2,13 +2,13 @@
 #include "handles/connectionhandle.h"
 #include "widgets/relation.h"
 
-namespace GraphView::Commands
+namespace GraphView
 {
 
-ChangeRelation::ChangeRelation(Scene *scene,
-                               Widgets::Relation *relation,
-                               Widgets::ConnectionHandle *oldHandle,
-                               Widgets::ConnectionHandle *newHandle)
+ChangeRelationCommand::ChangeRelationCommand(Scene *scene,
+                               RelationWidget *relation,
+                               ConnectionHandle *oldHandle,
+                               ConnectionHandle *newHandle)
     : _scene{scene}
     , _relation{relation}
     , _oldHandle{oldHandle}
@@ -17,20 +17,16 @@ ChangeRelation::ChangeRelation(Scene *scene,
 {
 }
 
-void ChangeRelation::redo()
+void ChangeRelationCommand::redo()
 {
     _relation->setTo(_newHandle);
     _relation->update();
-//    _oldHandle->setRelation(nullptr);
-//    _newHandle->setRelation(_relation);
 }
 
-void ChangeRelation::undo()
+void ChangeRelationCommand::undo()
 {
     _relation->setTo(_oldHandle);
     _relation->setPoly(_oldPoly);
-//    _newHandle->setRelation(nullptr);
-//    _oldHandle->setRelation(_relation);
 }
 
 }

@@ -6,29 +6,22 @@
 
 namespace GraphView {
 
-namespace Handles {
 class AbstractHandle;
-}
-
-namespace Widgets {
 class PolylineItem;
-}
-
-namespace Commands {
 
 class NodesCommand : public QUndoCommand
 {
 public:
     explicit NodesCommand();
     ~NodesCommand();
-    void addHandle(GraphView::Handles::AbstractHandle *handle);
+    void addHandle(AbstractHandle *handle);
     void createHandles();
     void removeHandles();
 
 protected:
     struct HandleData
     {
-        Widgets::PolylineItem *item;
+        PolylineItem *item;
         QPointF point;
         SizeType handleIndex;
     };
@@ -38,9 +31,9 @@ protected:
 class AddNodesCommand : public NodesCommand
 {
 public:
-    explicit AddNodesCommand(Widgets::PolylineItem *item,
+    explicit AddNodesCommand(PolylineItem *item,
                              QPointF point,
-                             GraphView::SizeType handleIndex);
+                             SizeType handleIndex);
     void undo() override;
     void redo() override;
 };
@@ -53,5 +46,4 @@ public:
     void redo() override;
 };
 
-} // namespace Commands
 } // namespace GraphView

@@ -4,7 +4,7 @@
 
 // #include <QPainter>
 
-// namespace GraphView::Widgets
+// namespace GraphView
 // {
 // TextNode::TextNode(QGraphicsItem *parent)
 //     : AbstractWidget(parent)
@@ -84,21 +84,21 @@
 //     connect(_data, &Data::AbstractData::reloaded, this, &TextNode::slotLoadData);
 // }
 
-// void TextNode::addConnection(ConnectionHandle *handle)
+// void TextNode::addConnection(ConnectionHandleWidget *handle)
 // {
 //     handle->setParentItem(this);
 //     _handles << handle;
 // }
 
-// ConnectionHandle *TextNode::addConnection(Qt::Edge edge)
+// ConnectionHandleWidget *TextNode::addConnection(Qt::Edge edge)
 // {
-//     auto handle = new GraphView::Widgets::ConnectionHandle{this};
+//     auto handle = new ConnectionHandleWidget{this};
 //     handle->setConnectionEdge(edge);
 //     addConnection(handle);
 //     return handle;
 // }
 
-// ConnectionHandle *TextNode::removeConnection(Qt::Edge edge)
+// ConnectionHandleWidget *TextNode::removeConnection(Qt::Edge edge)
 // {
 //     for (auto &h:_handles) {
 //         if (h->connectionEdge() == edge) {
@@ -110,21 +110,21 @@
 //     return nullptr;
 // }
 
-// int TextNode::connectionHandleIndex(Widgets::ConnectionHandle *handle) const
+// int TextNode::connectionHandleIndex(ConnectionHandleWidget *handle) const
 // {
 //     return _handles.indexOf(handle);
 // }
 
-// Widgets::ConnectionHandle *TextNode::connectionHandle(int index) const
+// ConnectionHandleWidget *TextNode::connectionHandle(int index) const
 // {
 //     if (index == -1)
 //         return nullptr;
 //     return _handles.at(index);
 // }
 
-// QList<GraphView::Widgets::ConnectionHandle *> TextNode::connectionHandles(ConnectionType connectionType) const
+// QList<ConnectionHandleWidget *> TextNode::connectionHandles(ConnectionType connectionType) const
 // {
-//     QList<GraphView::Widgets::ConnectionHandle *> list;
+//     QList<ConnectionHandleWidget *> list;
 //     for (auto &h : _handles)
 //         if (h->connectionType() == connectionType)
 //             list << h;

@@ -5,17 +5,14 @@
 namespace GraphView
 {
 
-namespace Widgets{
-class Relation;
-}
-namespace Tools
-{
-class EditRelation : public AbstractTool
+class RelationWidget;
+
+class EditRelationTool : public AbstractTool
 {
     Q_OBJECT
 
 public:
-    EditRelation(Scene *scene);
+    EditRelationTool(Scene *scene);
 
     bool accept(QGraphicsItem *item, QGraphicsSceneMouseEvent *mouseEvent) override;
     void mousePressed(QGraphicsSceneMouseEvent *mouseEvent) override;
@@ -23,10 +20,8 @@ public:
     void mouseReleased(QGraphicsSceneMouseEvent *mouseEvent) override;
 
 private:
-    Widgets::Relation *_relation{nullptr};
+    RelationWidget *_relation{nullptr};
 
 };
-
-}
 
 }

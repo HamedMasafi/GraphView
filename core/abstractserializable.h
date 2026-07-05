@@ -2,7 +2,7 @@
 
 #include <QJsonObject>
 
-namespace GraphView::Core
+namespace GraphView
 {
 class AbstractSerializable
 {

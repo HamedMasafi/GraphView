@@ -9,22 +9,17 @@ namespace GraphView
 {
 class Scene;
 
-namespace Widgets
-{
 class AbstractWidget;
-class ConnectionHandle;
-}
-namespace Tools{
+class ConnectionHandleWidget;
 class AbstractTool;
-class ConnectWidgets;
-class CreateWidget;
-class Magnifier;
-}
-class View : public QGraphicsView//, public Tools::AbstractToolsContainer<View>
+class ConnectWidgetsTool;
+class CreateWidgetTool;
+class MagnifierTool;
+class View : public QGraphicsView//, public AbstractToolsContainer<View>
 {
 Q_OBJECT
 
-    using CreatorFunction = std::function<Widgets::AbstractWidget *()>;
+    using CreatorFunction = std::function<AbstractWidget *()>;
 
 public:
     enum class Mode { Pointer, Hand, Rect, Relation };
@@ -34,8 +29,8 @@ public:
     Scene *scene() const;
     void setScene(Scene *newScene);
 
-    Tools::AbstractTool *tool() const;
-    void setTool(Tools::AbstractTool *tool);
+    AbstractTool *tool() const;
+    void setTool(AbstractTool *tool);
 
     void createDefaultCommands();
 
@@ -72,20 +67,20 @@ public:
         registerTool(t);
         return t;
     }
-    QAction *registerTool(Tools::AbstractTool *tool);
+    QAction *registerTool(AbstractTool *tool);
 
 private Q_SLOTS:
     void scene_createObjectRequested(QRectF rect);
-    void scene_widgetMoved(GraphView::Widgets::AbstractWidget *widget, QPointF lastPos, QPointF newPos);
-    void scene_widgetDoubleClicked(GraphView::Widgets::AbstractWidget *widget);
-    void scene_widgetsConnectionRequested(GraphView::Widgets::ConnectionHandle *from, GraphView::Widgets::ConnectionHandle *to);
-    void scene_removeRequested(GraphView::Widgets::AbstractWidget *widget);
+    void scene_widgetMoved(AbstractWidget *widget, QPointF lastPos, QPointF newPos);
+    void scene_widgetDoubleClicked(AbstractWidget *widget);
+    void scene_widgetsConnectionRequested(ConnectionHandleWidget *from, ConnectionHandleWidget *to);
+    void scene_removeRequested(AbstractWidget *widget);
 
 protected:
     struct ToolData {
         QString name;
         QAction *action;
-        Tools::AbstractTool *tool;
+        AbstractTool *tool;
     };
     Mode _mode{Mode::Pointer};
 
@@ -94,12 +89,12 @@ protected:
     Scene *_scene{nullptr};
     QList<QAction *> _actions;
 
-    Tools::ConnectWidgets *_relationTool;
-    Tools::CreateWidget *_createWidgetTool;
-    Tools::Magnifier *_magnifierTool;
+    ConnectWidgetsTool *_relationTool;
+    CreateWidgetTool *_createWidgetTool;
+    MagnifierTool *_magnifierTool;
     void keyPressEvent(QKeyEvent *event) override;
     int _zoomLevel{100};
-    QMap<QString, Tools::AbstractTool *> _tools;
+    QMap<QString, AbstractTool *> _tools;
 };
 
 }

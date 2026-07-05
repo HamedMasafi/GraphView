@@ -17,7 +17,7 @@ void MultiLine::cleanupTestCase()
 
 void MultiLine::test()
 {
-    GraphView::Widgets::MultiLineF c;
+    GraphView::MultiLineF c;
     c.append(QPointF{1, 1});
     c.append(QPointF{2, 2});
     c.append(QPointF{3, 3});

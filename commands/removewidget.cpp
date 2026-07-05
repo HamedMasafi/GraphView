@@ -3,31 +3,31 @@
 #include "scene.h"
 #include <widgets/abstractwidget.h>
 
-namespace GraphView::Commands
+namespace GraphView
 {
 
-RemoveWidget::RemoveWidget(Scene *scene, Widgets::AbstractWidget *item)
-    : RemoveWidget{scene, QList<Widgets::AbstractWidget *>{item}}
+RemoveWidgetCommand::RemoveWidgetCommand(Scene *scene, AbstractWidget *item)
+    : RemoveWidgetCommand{scene, QList<AbstractWidget *>{item}}
 {
 }
 
-RemoveWidget::RemoveWidget(Scene *scene, QList<Widgets::AbstractWidget *> items)
+RemoveWidgetCommand::RemoveWidgetCommand(Scene *scene, QList<AbstractWidget *> items)
     : QUndoCommand{}
     , _scene{scene}
     , _items{items}
 {
-    for (Widgets::AbstractWidget* item: items)
+    for (AbstractWidget* item: items)
         _ids << item->id();
-    setText(QCoreApplication::translate("Commands::RemoveWidget", "Remove widget"));
+    setText(QCoreApplication::translate("RemoveWidgetCommand", "Remove widget"));
 }
 
-void RemoveWidget::undo()
+void RemoveWidgetCommand::undo()
 {
     for (auto &item : _items)
         _scene->addWidget(item);
 }
 
-void RemoveWidget::redo()
+void RemoveWidgetCommand::redo()
 {
     for (auto &item : _items)
         _scene->removeWidget(item);

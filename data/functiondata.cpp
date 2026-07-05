@@ -1,6 +1,6 @@
 #include "functiondata.h"
 
-namespace Data {
+namespace GraphView {
 FunctionData::FunctionData()
     : AbstractData{AbstractData::Type::Function}
 {}
@@ -34,4 +34,4 @@ void FunctionData::setReturnType(const QString &newReturnType)
 {
     _returnType = newReturnType;
 }
-} // namespace Data
+} // namespace GraphView

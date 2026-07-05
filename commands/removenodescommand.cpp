@@ -1,6 +1,6 @@
 // #include "removenodescommand.h"
 
-// namespace GraphView::Commands
+// namespace GraphView
 // {
 // RemoveNodesCommand::RemoveNodesCommand()
 // {

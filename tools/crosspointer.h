@@ -4,15 +4,15 @@
 
 #include <QGraphicsItem>
 
-namespace GraphView::Tools
+namespace GraphView
 {
 
-class CrossPointer : public AbstractTool
+class CrossPointerTool : public AbstractTool
 {
     Q_OBJECT
 
 public:
-    explicit CrossPointer(Scene *scene);
+    explicit CrossPointerTool(Scene *scene);
 
     void mouseMoved(QGraphicsSceneMouseEvent *mouseEvent) override;
     ToolType toolType() const override;

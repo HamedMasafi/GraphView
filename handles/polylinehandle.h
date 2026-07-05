@@ -2,12 +2,10 @@
 
 #include "handles/abstracthandle.h"
 
-namespace GraphView {
+namespace GraphView
+{
 
-namespace Widgets {
 class PolylineItem;
-}
-namespace Handles {
 
 class PolylineHandle : public AbstractHandle
 {
@@ -16,17 +14,15 @@ class PolylineHandle : public AbstractHandle
 public:
     PolylineHandle();
 
-    Widgets::PolylineItem *poly() const;
-    void setPoly(Widgets::PolylineItem *newPoly);
+    PolylineItem *poly() const;
+    void setPoly(PolylineItem *newPoly);
 
     SizeType index() const;
     void setIndex(SizeType newIndex);
 
 private:
-    Widgets::PolylineItem *_poly;
+    PolylineItem *_poly;
     SizeType _index{};
 };
 
-} // namespace Handles
-
-} // namespace GraphView
+}

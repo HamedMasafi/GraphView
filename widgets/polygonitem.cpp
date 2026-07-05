@@ -3,11 +3,11 @@
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 
-namespace GraphView::Widgets
+namespace GraphView
 {
 
-PolygonItem::PolygonItem(QGraphicsItem *parent)
-    : PolylineItem(parent)
+PolygonItemWidget::PolygonItemWidget(QGraphicsItem *parent)
+    : PolylineItemWidget(parent)
 {
     setFlags(ItemIsSelectable | ItemIsMovable);
 }
@@ -16,7 +16,7 @@ PolygonItem::PolygonItem(QGraphicsItem *parent)
 
 
 
-void PolygonItem::paint(QPainter *p, const QStyleOptionGraphicsItem *opt, QWidget *)
+void PolygonItemWidget::paint(QPainter *p, const QStyleOptionGraphicsItem *opt, QWidget *)
 {
     if (_poly.size() < 2)
         return;

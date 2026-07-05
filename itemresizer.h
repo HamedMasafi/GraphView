@@ -9,20 +9,19 @@ class QGraphicsScene;
 
 namespace GraphView
 {
-namespace Core{
 class ResizeEvent;
 class MoveEvent;
-}
-namespace Widgets
-{
-class ResizeHandle;
+class WidgetResizer;
+
+
+class ItemResizeHandle;
 class AbstractWidget;
 
 enum ResizeDirectionFlag { None = 0, Top = 1, Left = 2, Right = 4, Bottom = 8 };
 Q_DECLARE_FLAGS(ResizeDirection, ResizeDirectionFlag)
 Q_DECLARE_OPERATORS_FOR_FLAGS(ResizeDirection)
 
-class ResizeHandle : public QObject, public QGraphicsRectItem
+class ItemResizeHandle : public QObject, public QGraphicsRectItem
 {
     Q_OBJECT
 
@@ -34,7 +33,7 @@ public:
         // Enable the use of qgraphicsitem_cast with this item.
         return Type;
     }
-    ResizeHandle(qreal radius = 15, QGraphicsItem *parent = 0);
+    ItemResizeHandle(qreal radius = 15, QGraphicsItem *parent = 0);
 
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
@@ -90,10 +89,10 @@ public:
 private:
     QGraphicsScene parent;
 
-    ResizeHandle *resizerTL, *resizerT, *resizerTR;
-    ResizeHandle *resizerL, *resizerR;
-    ResizeHandle *resizerBL, *resizerB, *resizerBR;
-    QList<ResizeHandle *> handles;
+    ItemResizeHandle *resizerTL, *resizerT, *resizerTR;
+    ItemResizeHandle *resizerL, *resizerR;
+    ItemResizeHandle *resizerBL, *resizerB, *resizerBR;
+    QList<ItemResizeHandle *> handles;
 
     QGraphicsScene *parentScene;
 
@@ -108,19 +107,19 @@ private:
 
     QList<AbstractWidget *> _selectedWidgets;
 
-    void setResezeHandlePos(ResizeHandle *handle, QPointF pos);
-    void setResezeHandlePos(ResizeHandle *handle, QPointF pos1, QPointF pos2);
+    void setResezeHandlePos(ItemResizeHandle *handle, QPointF pos);
+    void setResezeHandlePos(ItemResizeHandle *handle, QPointF pos1, QPointF pos2);
 
     void proccessNewRect(QRectF rc);
 
 signals:
-    void pointGridNeeded(GraphView::Core::MoveEvent *);
-    void sizeGridNeeded(GraphView::Core::ResizeEvent *);
+    void pointGridNeeded(MoveEvent *);
+    void sizeGridNeeded(ResizeEvent *);
     void resized();
 
 public slots:
     void handleMoving(QPointF point);
-    void widgetMoving(GraphView::Core::MoveEvent *event);
+    void widgetMoving(MoveEvent *event);
 };
 
 }

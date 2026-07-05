@@ -6,7 +6,7 @@
 
 #include "core/graphview_global.h"
 
-namespace GraphView::Handles
+namespace GraphView
 {
 
 struct AbstractHandleData{};

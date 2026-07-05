@@ -2,7 +2,7 @@
 
 #include "abstracttool.h"
 
-namespace GraphView::Tools {
+namespace GraphView {
 
 class MoveByModifTool : public AbstractTool
 {

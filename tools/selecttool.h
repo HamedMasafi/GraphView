@@ -7,20 +7,14 @@
 class QGraphicsRectItem;
 
 namespace GraphView {
-namespace Core {
 class MoveEvent;
-}
 
-namespace Handles {
 class ResizeHandle;
 class AbstractHandle;
 class PolylineHandle;
-} // namespace Handles
-namespace Widgets {
+
 class AbstractWidget;
-class Relation;
-} // namespace Widgets
-namespace Tools {
+class RelationWidget;
 
 class SelectTool;
 class SelectToolSubCommand
@@ -34,9 +28,6 @@ public:
 protected:
     SelectTool *_parent;
 };
-namespace SelectToolImpl {
-class ResizeHandle;
-}
 
 class SelectTool : public AbstractTool
 {
@@ -56,7 +47,7 @@ public:
     void mouseDoubleClicked(QGraphicsSceneMouseEvent *mouseEvent) override;
     void keyReleaseEvent(QKeyEvent *event)override;
 
-    void setSelectedWidget(Widgets::AbstractWidget *newSelectedWidget);
+    void setSelectedWidget(AbstractWidget *newSelectedWidget);
     void setVisible(bool visible);
 
     QString selectedWidgetsGeometry() const;
@@ -76,7 +67,7 @@ private Q_SLOTS:
 
 private:
     void setSelectedWidgetsGeometry(const QString &newSelectedWidgetsGeometry);
-    void handleMoving(Handles::ResizeHandle *handle, QPointF point);
+    void handleMoving(ResizeHandle *handle, QPointF point);
     void checkForPlaceWidgetInRelation();
 
     void moveSelectedWidgets(Qt::Key key, qreal distance);
@@ -97,23 +88,23 @@ private:
     void initHandles();
     void setHandlesOnItem(const QRectF &rc);
     void setHandlesOnItem(const QPolygonF &poly);
-    void setResezeHandlePos(Handles::ResizeHandle *handle, QPointF pos);
-    void setResezeHandlePos(Handles::ResizeHandle *handle, QPointF pos1, QPointF pos2);
+    void setResezeHandlePos(ResizeHandle *handle, QPointF pos);
+    void setResezeHandlePos(ResizeHandle *handle, QPointF pos1, QPointF pos2);
 
-    Widgets::AbstractWidget *_selectedWidget{nullptr};
+    AbstractWidget *_selectedWidget{nullptr};
     QRectF _initialRect;
     QPointF _objectInitialPos;
     QPointF _clickPos;
-    QMap<Widgets::AbstractWidget *, QPointF> _initialPositions;
+    QMap<AbstractWidget *, QPointF> _initialPositions;
     bool _wasMoved;
     bool m_isClonning;
-    Widgets::Relation *_relation{nullptr};
-    Handles::ResizeHandle *resizerTL, *resizerT, *resizerTR;
-    Handles::ResizeHandle *resizerL, *resizerR;
-    Handles::ResizeHandle *resizerBL, *resizerB, *resizerBR;
-    QList<Handles::ResizeHandle *> rectResizeHandles;
-    QList<Handles::PolylineHandle *> polyResizeHandles;
-    Handles::AbstractHandle *_selectedHandle{nullptr};
+    RelationWidget *_relation{nullptr};
+    ResizeHandle *resizerTL, *resizerT, *resizerTR;
+    ResizeHandle *resizerL, *resizerR;
+    ResizeHandle *resizerBL, *resizerB, *resizerBR;
+    QList<ResizeHandle *> rectResizeHandles;
+    QList<PolylineHandle *> polyResizeHandles;
+    AbstractHandle *_selectedHandle{nullptr};
     QPointF _itemClickPos;
     qreal m_scale{1};
     QRectF resizeRect;
@@ -127,5 +118,4 @@ private:
 
 };
 
-} // namespace Tools
 } // namespace GraphView

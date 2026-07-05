@@ -2,10 +2,10 @@
 
 #include "handles/connectionhandle.h"
 
-namespace GraphView::Widgets
+namespace GraphView
 {
 
-class CrossConnection : public ConnectionHandle
+class CrossConnectionWidget : public ConnectionHandleWidget
 {
     Q_OBJECT
 
@@ -16,7 +16,7 @@ public:
     {
         return Type;
     }
-    CrossConnection();
+    CrossConnectionWidget();
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 };

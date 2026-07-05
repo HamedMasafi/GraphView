@@ -48,7 +48,7 @@
 static const char *TYPE_KEY = "T";
 static const char *TYPE_VALUE = "V";
 
-namespace GraphView::Core {
+namespace GraphView {
 
 // --- HELPERS ---
 QString toBase64(const QVariant &v);
@@ -225,4 +225,4 @@ QList<T *> jsonToGadgets(const QJsonArray &arr)
 
 // void registerBasicConverters();
 
-} // namespace GraphView::Core
+} // namespace GraphView

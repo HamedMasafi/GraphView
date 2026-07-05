@@ -3,13 +3,13 @@
 
 #include "core/pointshelper.h"
 #include "event.h"
-#include "widgets/abstractwidget.h"
+#include "abstractwidget.h"
 #include "handles/connectionhandle.h"
 #include <QGraphicsSceneEvent>
 #include <QPainter>
 #include <QtMath>
 
-namespace GraphView::Widgets
+namespace GraphView
 {
 
 namespace
@@ -50,7 +50,7 @@ qreal average(qreal n1, qreal n2)
     return (n1 + n2) / 2;
 }
 
-QPointF point(ConnectionHandle *handle)
+QPointF point(ConnectionHandleWidget *handle)
 {
     return handle->mapToScene(handle->connectionPoint());
     //    switch (handle->connectionEdge()) {
@@ -110,20 +110,20 @@ bool findIntersects(const QLineF &line, const QRectF &rc, QPointF &intersectPoin
     return false;
 }
 
-Relation::Relation(QGraphicsItem *parent)
+RelationWidget::RelationWidget(QGraphicsItem *parent)
     : QObject{}
     , QGraphicsItem{parent}
-//    , _arrow{new ArrowHead{this}}
+//    , _arrow{new ArrowHeadWidget{this}}
 {
 
 }
 
-Relation::Relation(ConnectionHandle *from, ConnectionHandle *to)
+RelationWidget::RelationWidget(ConnectionHandleWidget *from, ConnectionHandleWidget *to)
     : QObject{}
     , QGraphicsItem{}
 //    , _from(from)
 //    , _to(to)
-//    , _arrow{new ArrowHead{this}}
+//    , _arrow{new ArrowHeadWidget{this}}
 {
 //    _poly.reset(point(from), point(to));
 
@@ -133,10 +133,10 @@ Relation::Relation(ConnectionHandle *from, ConnectionHandle *to)
 //        to->setRelation(this);
 //    auto w = dynamic_cast<AbstractWidget *>(from->parentItem());
 //    if (w)
-//        connect(w, &AbstractWidget::moving, this, &Relation::widget_moving);
+//        connect(w, &AbstractWidget::moving, this, &RelationWidget::widget_moving);
 //    w = dynamic_cast<AbstractWidget *>(to->parentItem());
 //    if (w)
-//        connect(w, &AbstractWidget::moving, this, &Relation::widget_moving);
+//        connect(w, &AbstractWidget::moving, this, &RelationWidget::widget_moving);
     //    setFlag(QGraphicsItem::ItemIsSelectable);
 
     setFrom(from);
@@ -144,12 +144,12 @@ Relation::Relation(ConnectionHandle *from, ConnectionHandle *to)
 
 }
 
-Relation::PointHolder &Relation::from()
+RelationWidget::PointHolder &RelationWidget::from()
 {
     return _from;
 }
 
-void Relation::setFrom(const PointHolder &newFrom)
+void RelationWidget::setFrom(const PointHolder &newFrom)
 {
     if (_from == newFrom)
         return;
@@ -166,18 +166,18 @@ void Relation::setFrom(const PointHolder &newFrom)
         newFrom.handle()->setRelation(this);
         auto w = dynamic_cast<AbstractWidget *>(newFrom.handle()->parentItem());
         if (w)
-            connect(w, &AbstractWidget::moving, this, &Relation::widget_moving);
+            connect(w, &AbstractWidget::moving, this, &RelationWidget::widget_moving);
     }
     qDebug() << "Set from" << newFrom;
     _poly.reset(_from, _to);
 }
 
-Relation::PointHolder &Relation::to()
+RelationWidget::PointHolder &RelationWidget::to()
 {
     return _to;
 }
 
-void Relation::setTo(const PointHolder &newTo)
+void RelationWidget::setTo(const PointHolder &newTo)
 {
     if (_to == newTo)
         return;
@@ -193,13 +193,13 @@ void Relation::setTo(const PointHolder &newTo)
         newTo.handle()->setRelation(this);
         auto w = dynamic_cast<AbstractWidget *>(newTo.handle()->parentItem());
         if (w)
-            connect(w, &AbstractWidget::moving, this, &Relation::widget_moving);
+            connect(w, &AbstractWidget::moving, this, &RelationWidget::widget_moving);
     }
 
     _poly.reset(_from, _to);
 }
 
-void Relation::reset(const PointHolder &newFrom, const PointHolder &newTo)
+void RelationWidget::reset(const PointHolder &newFrom, const PointHolder &newTo)
 {
     qDebug() << "reset to" << newFrom << newTo;
     if (_from.handle()) {
@@ -218,16 +218,16 @@ void Relation::reset(const PointHolder &newFrom, const PointHolder &newTo)
     if (newFrom.handle()) {
         w = dynamic_cast<AbstractWidget *>(newFrom.handle()->parentItem());
         if (w)
-            connect(w, &AbstractWidget::moving, this, &Relation::widget_moving);
+            connect(w, &AbstractWidget::moving, this, &RelationWidget::widget_moving);
     }
     if (newTo.handle()) {
         w = dynamic_cast<AbstractWidget *>(newTo.handle()->parentItem());
         if (w)
-            connect(w, &AbstractWidget::moving, this, &Relation::widget_moving);
+            connect(w, &AbstractWidget::moving, this, &RelationWidget::widget_moving);
     }
 }
 
-//void Relation::setTo(const QPointF &pt)
+//void RelationWidget::setTo(const QPointF &pt)
 //{
 //    prepareGeometryChange();
 //    _toPoint = pt;
@@ -239,7 +239,7 @@ void Relation::reset(const PointHolder &newFrom, const PointHolder &newTo)
 ////    update();
 //}
 
-void Relation::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void RelationWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option)
     Q_UNUSED(widget)
@@ -280,7 +280,7 @@ void Relation::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     //    qDebug() << _poly;
 }
 
-QRectF Relation::boundingRect() const
+QRectF RelationWidget::boundingRect() const
 {
     if (!_poly.size())
         return QRectF{0, 0, 0, 0};
@@ -288,7 +288,7 @@ QRectF Relation::boundingRect() const
     return _poly.boundingRect().normalized().adjusted(-extra, -extra, extra, extra);
 }
 
-void Relation::relocateLines()
+void RelationWidget::relocateLines()
 {
 //    if (_poly.size() - 1 > _lines.size())
 //        while (_poly.size() - 1 != _lines.size())
@@ -302,14 +302,14 @@ void Relation::relocateLines()
     //        _lines.at(i)->setLine(_poly.at(i).x(), _poly.at(i).y(), _poly.at(i + 1).x(), _poly.at(i + 1).y());
 }
 
-void Relation::normalizePoints()
+void RelationWidget::normalizePoints()
 {
     for (int i = 0; i < _poly.size(); ++i) {
 
     }
 }
 
-void Relation::reset()
+void RelationWidget::reset()
 {
     if (_to.handle()) {
         _to.handle()->setRelation(nullptr);
@@ -323,24 +323,24 @@ void Relation::reset()
     _from = QPointF{0, 0};
 }
 
-void Relation::setPoly(const MultiLineF &newPoly)
+void RelationWidget::setPoly(const MultiLineF &newPoly)
 {
     prepareGeometryChange();
     _poly = newPoly;
     update();
 }
 
-MultiLineF Relation::poly() const
+MultiLineF RelationWidget::poly() const
 {
     return _poly;
 }
 
-qreal Relation::distance(const QPointF &pt) const
+qreal RelationWidget::distance(const QPointF &pt) const
 {
     qreal bd{0};
     bool isFirstLoop{true};
     for (auto i = 0; i < _poly.size() - 1; i++) {
-        auto dist = GraphView::Core::distance(pt, QLineF{_poly.at(i), _poly.at(i + 1)});
+        auto dist = distance(pt, QLineF{_poly.at(i), _poly.at(i + 1)});
         if (Q_UNLIKELY(isFirstLoop)) {
             bd = dist;
             isFirstLoop = false;
@@ -351,32 +351,32 @@ qreal Relation::distance(const QPointF &pt) const
     return bd;
 }
 
-bool Relation::intersect(const QPointF &pt, QPointF *intersectPoint, qreal maxDist) const
+bool RelationWidget::intersect(const QPointF &pt, QPointF *intersectPoint, qreal maxDist) const
 {
     for (auto i = 0; i < _poly.size() - 1; i++) {
         QLineF line{_poly.at(i), _poly.at(i + 1)};
-        auto dist = GraphView::Core::distance(pt, line);
+        auto dist = distance(pt, line);
         if (dist <= maxDist) {
             if (intersectPoint)
-                *intersectPoint = ::GraphView::Widgets::nearestPoint(line, pt);
+                *intersectPoint = nearestPoint(line, pt);
             return true;
         }
     }
     return false;
 }
 
-bool Relation::isActive() const
+bool RelationWidget::isActive() const
 {
     return _isActive;
 }
 
-void Relation::setActive(bool newIsActive)
+void RelationWidget::setActive(bool newIsActive)
 {
     _isActive = newIsActive;
     update();
 }
 
-void Relation::processMousePressEvent(const QPointF &pt)
+void RelationWidget::processMousePressEvent(const QPointF &pt)
 {
     //    if (_poly.size() > 1) {
     //        for (auto i = 0; i < _poly.size() - 1; i++) {
@@ -389,7 +389,7 @@ void Relation::processMousePressEvent(const QPointF &pt)
     //        grabMouse();
 }
 
-void Relation::processMouseMoveEvent(const QPointF &pt)
+void RelationWidget::processMouseMoveEvent(const QPointF &pt)
 {
     prepareGeometryChange();
     _poly.moveNearest(pt);
@@ -398,7 +398,7 @@ void Relation::processMouseMoveEvent(const QPointF &pt)
     //        QGraphicsItem::mouseMoveEvent(event);
 }
 
-void Relation::processMouseReleaseEvent(const QPointF &pt)
+void RelationWidget::processMouseReleaseEvent(const QPointF &pt)
 {
     Q_UNUSED(pt)
     prepareGeometryChange();
@@ -408,13 +408,13 @@ void Relation::processMouseReleaseEvent(const QPointF &pt)
     //        QGraphicsItem::mouseReleaseEvent(event);
 }
 
-void Relation::widget_moving(Core::MoveEvent *)
+void RelationWidget::widget_moving(MoveEvent *)
 {
     prepareGeometryChange();
     _poly.reset(_from, _to);
 }
 
-void Relation::calculateArrow()
+void RelationWidget::calculateArrow()
 {
     // constexpr qreal arrowSize = 20;
 
@@ -458,58 +458,58 @@ void MultiLineF::normalize()
     //    }
 }
 
-Relation::PointHolder::PointHolder(const QPointF &pt)
+RelationWidget::PointHolder::PointHolder(const QPointF &pt)
     : _pt{pt}
     , _handle{nullptr}
 {
 }
 
-Relation::PointHolder::PointHolder(ConnectionHandle *handle)
+RelationWidget::PointHolder::PointHolder(ConnectionHandleWidget *handle)
     : _handle{handle}
 {
 }
 
-Relation::PointHolder Relation::PointHolder::operator=(const QPointF &pt)
+RelationWidget::PointHolder RelationWidget::PointHolder::operator=(const QPointF &pt)
 {
     PointHolder ret{pt};
     return ret;
 }
 
-Relation::PointHolder Relation::PointHolder::operator=(ConnectionHandle *handle){
+RelationWidget::PointHolder RelationWidget::PointHolder::operator=(ConnectionHandleWidget *handle){
     return PointHolder{handle};
 }
 
-bool Relation::PointHolder::operator==(ConnectionHandle *handle){
+bool RelationWidget::PointHolder::operator==(ConnectionHandleWidget *handle){
     return _handle == handle;
 }
 
-bool Relation::PointHolder::operator==(const Relation::PointHolder &other){
+bool RelationWidget::PointHolder::operator==(const RelationWidget::PointHolder &other){
     if (_handle || other.handle())
         return _handle == other._handle;
     return _pt == other._pt;
 }
 
-bool Relation::PointHolder::operator==(const QPointF &pt){
+bool RelationWidget::PointHolder::operator==(const QPointF &pt){
     return !_handle && _pt == pt;
 }
 
-QPointF Relation::PointHolder::point() const {
+QPointF RelationWidget::PointHolder::point() const {
     if (_handle)
         return _handle->sceneConnectionPoint();
     return _pt;
 }
 
-Relation::PointHolder::operator QPointF()
+RelationWidget::PointHolder::operator QPointF()
 {
     return point();
 }
 
-Relation::PointHolder::operator const QPointF() const
+RelationWidget::PointHolder::operator const QPointF() const
 {
     return point();
 }
 
-QJsonObject Relation::PointHolder::saveJson() const
+QJsonObject RelationWidget::PointHolder::saveJson() const
 {
     QJsonObject o;
     if (handle()){
@@ -522,20 +522,20 @@ QJsonObject Relation::PointHolder::saveJson() const
     return o;
 }
 
-bool Relation::PointHolder::loadJson(const QJsonObject &object)
+bool RelationWidget::PointHolder::loadJson(const QJsonObject &object)
 {
     Q_UNUSED(object)
     return true;
 }
 
-ConnectionHandle *Relation::PointHolder::handle() const
+ConnectionHandleWidget *RelationWidget::PointHolder::handle() const
 {
     return _handle;
 }
 
 }
 
-QDebug operator<<(QDebug d, const GraphView::Widgets::Relation::PointHolder &p) {
+QDebug operator<<(QDebug d, const GraphView::RelationWidget::PointHolder &p) {
     auto pt = p.point();
     if (p.handle()){
         d.nospace() << "PointHolder(" << (int *)p.handle() << " " << pt.x() << "," << pt.y() << ")";

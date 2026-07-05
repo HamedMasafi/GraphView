@@ -2,7 +2,7 @@
 
 #include <QPen>
 
-namespace GraphView::Handles {
+namespace GraphView {
 constexpr int ResizeHandleSize{15};
 
 ResizeHandle::ResizeHandle()
@@ -13,4 +13,4 @@ ResizeHandle::ResizeHandle()
     setFlag(QGraphicsItem::ItemIsSelectable, false);
 }
 
-} // namespace GraphView::Handles
+} // namespace GraphView

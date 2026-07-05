@@ -7,7 +7,7 @@
 #include <QCoreApplication>
 #include <QJsonObject>
 
-namespace GraphView::Commands {
+namespace GraphView {
 
 struct WidgetChangeData
 {
@@ -15,10 +15,10 @@ struct WidgetChangeData
     QString className;
     QRectF rect;
     QJsonObject state;
-    Widgets::AbstractWidget *widget{};
+    AbstractWidget *widget{};
 };
 
-void AddWidgets::add(const QString &className,
+void AddWidgetsCommand::add(const QString &className,
                      const QRectF &rect,
                      const QJsonObject &state,
                      const QUuid &id)
@@ -31,27 +31,27 @@ void AddWidgets::add(const QString &className,
     _data << d;
 
     if (_data.size() > 1)
-        setText(QCoreApplication::translate("GraphView::Commands::AddWidgets", "Add widgets"));
+        setText(QCoreApplication::translate("AddWidgetsCommand", "Add widgets"));
     else
-        setText(QCoreApplication::translate("GraphView::Commands::AddWidgets", "Add widget"));
+        setText(QCoreApplication::translate("AddWidgetsCommand", "Add widget"));
 }
 
-void AddWidgets::undo()
+void AddWidgetsCommand::undo()
 {
     removeAll();
 }
 
-void AddWidgets::redo()
+void AddWidgetsCommand::redo()
 {
     createAll();
 }
 
-AbstractAddRemoveWidgets::AbstractAddRemoveWidgets(ScenePrivate *sceneData)
+AbstractAddRemoveWidgetsCommand::AbstractAddRemoveWidgetsCommand(ScenePrivate *sceneData)
     : QUndoCommand{}
     , _sceneData{sceneData}
 {}
 
-void AbstractAddRemoveWidgets::createAll()
+void AbstractAddRemoveWidgetsCommand::createAll()
 {
     for (auto &d : _data) {
         d->widget = _sceneData->createWidget(d->className, d->id);
@@ -61,7 +61,7 @@ void AbstractAddRemoveWidgets::createAll()
     }
 }
 
-void AbstractAddRemoveWidgets::removeAll()
+void AbstractAddRemoveWidgetsCommand::removeAll()
 {
     for (auto &d : _data) {
         _sceneData->removeWidget(d->widget);
@@ -69,4 +69,4 @@ void AbstractAddRemoveWidgets::removeAll()
     }
 }
 
-} // namespace GraphView::Commands
+} // namespace GraphView

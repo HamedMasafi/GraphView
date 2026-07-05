@@ -7,13 +7,13 @@
 #include <QTransform>
 #include <QVariant>
 
-namespace GraphView::Tools {
+namespace GraphView {
 
-Zoom::Zoom(Scene *scene)
+ZoomTool::ZoomTool(Scene *scene)
     : AbstractTool{scene}
 {}
 
-void Zoom::setZoomLevel(int newZoomLevel)
+void ZoomTool::setZoomLevel(int newZoomLevel)
 {
     if (newZoomLevel < 0 || newZoomLevel > 200)
         return;
@@ -37,7 +37,7 @@ void Zoom::setZoomLevel(int newZoomLevel)
     emit zoomLevelChanged(_zoomLevel);
 }
 
-void Zoom::wheelEvent(QGraphicsSceneWheelEvent *event)
+void ZoomTool::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
     if (Q_LIKELY(_view)) {
         if (event->modifiers() & Qt::ControlModifier) {
@@ -47,14 +47,14 @@ void Zoom::wheelEvent(QGraphicsSceneWheelEvent *event)
     }
 }
 
-AbstractTool::ToolType Zoom::toolType() const
+AbstractTool::ToolType ZoomTool::toolType() const
 {
     return AbstractTool::ToolType::AlwaysListener;
 }
 
-int Zoom::zoomLevel() const
+int ZoomTool::zoomLevel() const
 {
     return _zoomLevel;
 }
 
-} // namespace GraphView::Tools
+} // namespace GraphView

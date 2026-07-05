@@ -1,6 +1,6 @@
 #include "widgetsresizecommand.h"
 
-namespace GraphView::Commands
+namespace GraphView
 {
 WidgetsResizeCommand::WidgetsResizeCommand()
 {

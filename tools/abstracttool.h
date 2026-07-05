@@ -15,14 +15,8 @@ namespace GraphView
 {
 class Scene;
 class View;
-
-namespace Widgets
-{
 class AbstractWidget;
-}
 
-namespace Tools
-{
 class AbstractTool : public QObject
 {
     Q_OBJECT
@@ -84,5 +78,4 @@ protected:
     View *_view{nullptr};
 };
 
-}
 }

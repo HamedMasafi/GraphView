@@ -164,11 +164,11 @@ void WidgetResizer::setVisible(bool visible)
         handles[i]->setVisible(visible);
 }
 
-void WidgetResizer::setActiveItem(Widgets::AbstractWidget *item)
+void WidgetResizer::setActiveItem(AbstractWidget *item)
 {
     if (_selectedWidgets.contains(item))
         return;
-    connect(item, &Widgets::AbstractWidget::moving, this, &WidgetResizer::widgetMoving);
+    connect(item, &AbstractWidget::moving, this, &WidgetResizer::widgetMoving);
 
     clear(true);
     _selectedWidgets.clear();
@@ -224,10 +224,10 @@ void WidgetResizer::setResezeHandlePos(ResizeHandle *handle, QPointF pos1, QPoin
 
 void WidgetResizer::handleMoving(QPointF point)
 {
-    ResizeHandle *s = qobject_cast<ResizeHandle *>(sender());
+    ItemResizeHandle *s = qobject_cast<ItemResizeHandle *>(sender());
     QRectF rc = resizeRect;
 
-    Core::MoveEvent e(point, point);
+    MoveEvent e(point, point);
     emit pointGridNeeded(&e);
 
     if (!e.isAccepted())
@@ -370,7 +370,7 @@ void WidgetResizer::refreshWidgets()
     setHandlesOnItem(rc);
 }
 
-void WidgetResizer::widgetMoving(Core::MoveEvent *event)
+void WidgetResizer::widgetMoving(MoveEvent *event)
 {
     Q_UNUSED(event)
     //    AbstractWidget *senderWidget = dynamic_cast<AbstractWidget*>(sender());

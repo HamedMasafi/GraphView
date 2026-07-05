@@ -6,17 +6,17 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 
-namespace GraphView::Widgets
+namespace GraphView
 {
 
-ConnectionHandle::ConnectionHandle(QGraphicsItem *parent)
+ConnectionHandleWidget::ConnectionHandleWidget(QGraphicsItem *parent)
     :  AbstractRectWidget{parent}
 {
     setSize(30, 20);
     setAcceptHoverEvents(true);
 }
 
-QRectF ConnectionHandle::boundingRect() const
+QRectF ConnectionHandleWidget::boundingRect() const
 {
     switch (_connectionEdge) {
     case Qt::TopEdge:
@@ -31,7 +31,7 @@ QRectF ConnectionHandle::boundingRect() const
     return QRectF{};
 }
 
-void ConnectionHandle::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void ConnectionHandleWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option)
     Q_UNUSED(widget)
@@ -58,40 +58,40 @@ void ConnectionHandle::paint(QPainter *painter, const QStyleOptionGraphicsItem *
         painter->drawLine(connectionPoint(), centerPoint());
         if (_connectionType == Input) {
             painter->setBrush(Qt::darkGray);
-            Core::paintFilledArrow(painter, Qt::RightEdge, rc);
+            paintFilledArrow(painter, Qt::RightEdge, rc);
         }
     } else {
 //        painter->fillRect(QRectF{QPointF{0,0},_size }, Qt::yellow);
-        Core::paintArrow(painter, Qt::RightEdge, rc);
+        paintArrow(painter, Qt::RightEdge, rc);
     }
 }
 
-QPointF ConnectionHandle::handleScenePos() const
+QPointF ConnectionHandleWidget::handleScenePos() const
 {
     return mapToScene(QPointF{0, size().height() / 2});
 }
 
-void ConnectionHandle::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void ConnectionHandleWidget::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    auto sc = qobject_cast<GraphView::Scene *>(scene());
+    auto sc = qobject_cast<Scene *>(scene());
     if (!sc)
         return;
 
     QGraphicsItem::mousePressEvent(event);
 }
 
-void ConnectionHandle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void ConnectionHandleWidget::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->buttons() == Qt::LeftButton) { }
     QGraphicsItem::mouseMoveEvent(event);
 }
 
-Relation *ConnectionHandle::relation() const
+RelationWidget *ConnectionHandleWidget::relation() const
 {
     return _relation;
 }
 
-void ConnectionHandle::setRelation(Relation *newRelation)
+void ConnectionHandleWidget::setRelation(RelationWidget *newRelation)
 {
     if (!newRelation) {
         qDebug() << "NULL";
@@ -100,7 +100,7 @@ void ConnectionHandle::setRelation(Relation *newRelation)
     update();
 }
 
-QPointF ConnectionHandle::connectionPoint() const
+QPointF ConnectionHandleWidget::connectionPoint() const
 {
     switch (_connectionEdge) {
     case Qt::TopEdge:
@@ -115,48 +115,48 @@ QPointF ConnectionHandle::connectionPoint() const
     return QPointF{};
 }
 
-QPointF ConnectionHandle::sceneConnectionPoint() const
+QPointF ConnectionHandleWidget::sceneConnectionPoint() const
 {
     return mapToScene(connectionPoint());
 }
 
-int ConnectionHandle::index() const
+int ConnectionHandleWidget::index() const
 {
     return _index;
 }
 
-void ConnectionHandle::setIndex(int newIndex)
+void ConnectionHandleWidget::setIndex(int newIndex)
 {
     _index = newIndex;
 }
 
-GraphView::ConnectionType ConnectionHandle::connectionType() const
+ConnectionType ConnectionHandleWidget::connectionType() const
 {
     return _connectionType;
 }
 
-void ConnectionHandle::setConnectionType(ConnectionType newConnectionType)
+void ConnectionHandleWidget::setConnectionType(ConnectionType newConnectionType)
 {
     _connectionType = newConnectionType;
 }
 
-Qt::Edge ConnectionHandle::connectionEdge() const
+Qt::Edge ConnectionHandleWidget::connectionEdge() const
 {
     return _connectionEdge;
 }
 
-void ConnectionHandle::setConnectionEdge(Qt::Edge newConnectionEdge)
+void ConnectionHandleWidget::setConnectionEdge(Qt::Edge newConnectionEdge)
 {
     prepareGeometryChange();
     _connectionEdge = newConnectionEdge;
 }
 
-bool ConnectionHandle::isSelected() const
+bool ConnectionHandleWidget::isSelected() const
 {
     return _isSelected;
 }
 
-void ConnectionHandle::setIsSelected(bool newIsSelected)
+void ConnectionHandleWidget::setIsSelected(bool newIsSelected)
 {
     _isSelected = newIsSelected;
     update();

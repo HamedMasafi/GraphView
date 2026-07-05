@@ -2,21 +2,21 @@
 
 #include <QPainter>
 
-namespace GraphView::Widgets
+namespace GraphView
 {
-ArrowHead::ArrowHead(QGraphicsItem *parent)
+ArrowHeadWidget::ArrowHeadWidget(QGraphicsItem *parent)
     : AbstractRectWidget{parent}
 {
 }
 
-void ArrowHead::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void ArrowHeadWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option)
     Q_UNUSED(widget)
     painter->drawPolygon(_arrowPoly);
 }
 
-void ArrowHead::calculateSize()
+void ArrowHeadWidget::calculateSize()
 {
     _arrowPoly.clear();
     switch(_edge){
@@ -52,56 +52,56 @@ void ArrowHead::calculateSize()
     update();
 }
 
-Qt::Edge ArrowHead::edge() const
+Qt::Edge ArrowHeadWidget::edge() const
 {
     return _edge;
 }
 
-void ArrowHead::setEdge(Qt::Edge newEdge)
+void ArrowHeadWidget::setEdge(Qt::Edge newEdge)
 {
     _edge = newEdge;
     calculateSize();
 }
 
-QPointF ArrowHead::point() const
+QPointF ArrowHeadWidget::point() const
 {
     return _point;
 }
 
-void ArrowHead::setPoint(QPointF newPoint)
+void ArrowHeadWidget::setPoint(QPointF newPoint)
 {
     _point = newPoint;
     calculateSize();
 }
 
-qreal ArrowHead::length() const
+qreal ArrowHeadWidget::length() const
 {
     return _length;
 }
 
-void ArrowHead::setLength(qreal newLength)
+void ArrowHeadWidget::setLength(qreal newLength)
 {
     _length = newLength;
     calculateSize();
 }
 
-qreal ArrowHead::thickness() const
+qreal ArrowHeadWidget::thickness() const
 {
     return _thickness;
 }
 
-void ArrowHead::setThickness(qreal newThickness)
+void ArrowHeadWidget::setThickness(qreal newThickness)
 {
     _thickness = newThickness;
     calculateSize();
 }
 
-QPolygonF ArrowHead::arrowPoly() const
+QPolygonF ArrowHeadWidget::arrowPoly() const
 {
     return _arrowPoly;
 }
 
-void ArrowHead::setArrowPoly(const QPolygonF &newArrowPoly)
+void ArrowHeadWidget::setArrowPoly(const QPolygonF &newArrowPoly)
 {
     _arrowPoly = newArrowPoly;
     calculateSize();

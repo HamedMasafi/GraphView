@@ -4,16 +4,16 @@
 #include "widgets/abstractrectwidget.h"
 #include <scene.h>
 
-namespace GraphView::Commands {
+namespace GraphView {
 
-ChangeWidgetsGeometry::ChangeWidgetsGeometry(Scene *scene)
+ChangeWidgetsGeometryCommand::ChangeWidgetsGeometryCommand(Scene *scene)
     : QUndoCommand{}
     , _scene{scene}
 {
-    setText(QCoreApplication::translate("Commands::MoveWidget", "Move widget"));
+    setText(QCoreApplication::translate("ChangeWidgetsGeometryCommand", "Move widget"));
 }
 
-void ChangeWidgetsGeometry::undo()
+void ChangeWidgetsGeometryCommand::undo()
 {
     for (auto &di : _data) {
         auto w = _scene->widgetById(di.id);
@@ -22,7 +22,7 @@ void ChangeWidgetsGeometry::undo()
     }
 }
 
-void ChangeWidgetsGeometry::redo()
+void ChangeWidgetsGeometryCommand::redo()
 {
     for (auto &di : _data) {
         auto w = _scene->widgetById(di.id);
@@ -31,17 +31,17 @@ void ChangeWidgetsGeometry::redo()
     }
 }
 
-void ChangeWidgetsGeometry::addWidget(Widgets::AbstractWidget *widget,
+void ChangeWidgetsGeometryCommand::addWidget(AbstractWidget *widget,
                                       const QPointF &from,
                                       const QPointF &to)
 {
     _data << WidgetData{widget->id(), QRectF{from, widget->size()}, QRectF{to, widget->size()}};
 }
 
-void ChangeWidgetsGeometry::addWidget(Widgets::AbstractWidget *widget,
+void ChangeWidgetsGeometryCommand::addWidget(AbstractWidget *widget,
                                       const QRectF &from,
                                       const QRectF &to)
 {
     _data << WidgetData{widget->id(), from, to};
 }
-} // namespace GraphView::Commands
+} // namespace GraphView

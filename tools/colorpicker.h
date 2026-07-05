@@ -4,15 +4,15 @@
 
 #include <QCursor>
 
-namespace GraphView::Tools
+namespace GraphView
 {
 
-class ColorPicker : public AbstractTool
+class ColorPickerTool : public AbstractTool
 {
     Q_OBJECT
 
 public:
-    explicit ColorPicker(Scene *scene);
+    explicit ColorPickerTool(Scene *scene);
 
     void mousePressed(QGraphicsSceneMouseEvent *mouseEvent) override;
     void activate() override;

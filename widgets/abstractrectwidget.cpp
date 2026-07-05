@@ -1,9 +1,9 @@
 #include "abstractrectwidget.h"
 
-namespace GraphView::Widgets {
+namespace GraphView {
 
 AbstractRectWidget::AbstractRectWidget(QGraphicsItem *parent)
     : AbstractWidget{parent}
 {}
 
-} // namespace GraphView::Widgets
+} // namespace GraphView

@@ -7,15 +7,15 @@
 #include <QColor>
 #include <QDebug>
 
-namespace GraphView::Tools
+namespace GraphView
 {
 
-ColorPicker::ColorPicker(Scene *scene) : AbstractTool{scene}
+ColorPickerTool::ColorPickerTool(Scene *scene) : AbstractTool{scene}
 {
     _cursor = QCursor{QPixmap{":/icons/color_picker.png"}, 1, 32};
 }
 
-void ColorPicker::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
+void ColorPickerTool::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
 {
     _color = _sceneImage.pixelColor(mouseEvent->scenePos().toPoint());
     qDebug() << "Color selected" << _color;
@@ -23,7 +23,7 @@ void ColorPicker::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
     // emit finished();
 }
 
-void ColorPicker::activate()
+void ColorPickerTool::activate()
 {
     _sceneImage = QImage{_scene->sceneRect().size().toSize(), QImage::Format_ARGB32};
     _sceneImage.fill(Qt::transparent);
@@ -33,7 +33,7 @@ void ColorPicker::activate()
     _view->setCursor(_cursor);
 }
 
-void ColorPicker::deactivate()
+void ColorPickerTool::deactivate()
 {
     _view->setCursor(Qt::ArrowCursor);
 }

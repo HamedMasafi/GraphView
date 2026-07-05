@@ -1,6 +1,6 @@
 #include "polylinehandle.h"
 
-namespace GraphView::Handles
+namespace GraphView
 {
 
 PolylineHandle::PolylineHandle()
@@ -8,12 +8,12 @@ PolylineHandle::PolylineHandle()
 {
 }
 
-Widgets::PolylineItem *PolylineHandle::poly() const
+PolylineItem *PolylineHandle::poly() const
 {
     return _poly;
 }
 
-void PolylineHandle::setPoly(Widgets::PolylineItem *newPoly)
+void PolylineHandle::setPoly(PolylineItem *newPoly)
 {
     _poly = newPoly;
 }

@@ -5,15 +5,16 @@
 #include <QApplication>
 #include <scene.h>
 
-namespace GraphView::Commands {
-MoveWidgets::MoveWidgets(Scene *scene)
+namespace GraphView {
+
+MoveWidgetsCommand::MoveWidgetsCommand(Scene *scene)
     : QUndoCommand{}
     , _scene{scene}
 {
-    setText(QCoreApplication::translate("Commands::MoveWidget", "Move widget"));
+    setText(QCoreApplication::translate("MoveWidgetsCommand", "Move widget"));
 }
 
-void MoveWidgets::undo()
+void MoveWidgetsCommand::undo()
 {
     for (auto &di : _data) {
         auto w = _scene->widgetById(di.id);
@@ -22,7 +23,7 @@ void MoveWidgets::undo()
     }
 }
 
-void MoveWidgets::redo()
+void MoveWidgetsCommand::redo()
 {
     for (auto &di : _data) {
         auto w = _scene->widgetById(di.id);
@@ -31,9 +32,9 @@ void MoveWidgets::redo()
     }
 }
 
-void MoveWidgets::addWidget(const QUuid &id, const QPointF &from, const QPointF &to)
+void MoveWidgetsCommand::addWidget(const QUuid &id, const QPointF &from, const QPointF &to)
 {
     _data << WidgetData{from, to, id};
 }
 
-} // namespace GraphView::Commands
+} // namespace GraphView

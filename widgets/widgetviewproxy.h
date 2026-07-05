@@ -2,7 +2,7 @@
 
 #include <QGraphicsProxyWidget>
 
-namespace GraphView::Widgets {
+namespace GraphView {
 
 class WidgetViewProxy : public QGraphicsProxyWidget
 {

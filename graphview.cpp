@@ -30,40 +30,40 @@ void View::scene_createObjectRequested(QRectF rect)
     Q_UNUSED(rect)
     // if (rect.width() > 10 && rect.height() > 10) {
     //     auto widget = _creator();
-    //     auto cmd = new Commands::AddWidget(_scene, rect, widget);
+    //     auto cmd = new AddWidgetCommand(_scene, rect, widget);
     //     _scene->undoStack()->push(cmd);
     // }
 }
 
-void View::scene_widgetMoved(Widgets::AbstractWidget *widget, QPointF lastPos, QPointF newPos)
+void View::scene_widgetMoved(AbstractWidget *widget, QPointF lastPos, QPointF newPos)
 {
     Q_UNUSED(widget)
     Q_UNUSED(lastPos)
     Q_UNUSED(newPos)
-    //    auto cmd = new Commands::MoveWidget{widget, lastPos};
+    //    auto cmd = new MoveWidgetsCommand{widget, lastPos};
     //    _scene->undoStack()->push(cmd);
 }
 
-void View::scene_widgetDoubleClicked(Widgets::AbstractWidget *widget)
+void View::scene_widgetDoubleClicked(AbstractWidget *widget)
 {
     Q_UNUSED(widget)
 }
 
-void View::scene_widgetsConnectionRequested(Widgets::ConnectionHandle *from, Widgets::ConnectionHandle *to)
+void View::scene_widgetsConnectionRequested(ConnectionHandleWidget *from, ConnectionHandleWidget *to)
 {
     Q_UNUSED(from)
     Q_UNUSED(to)
     qDebug() << "*************************" << Q_FUNC_INFO;
-    //    auto relation = new Widgets::Relation{from, to};
+    //    auto relation = new RelationWidget{from, to};
     //    from->setRelation(relation);
     //    to->setRelation(relation);
-    //    auto cmd = new Commands::AddRelation{_scene, relation};
+    //    auto cmd = new AddRelationCommand{_scene, relation};
     //   _scene->undoStack()->push(cmd);
 }
 
-void View::scene_removeRequested(Widgets::AbstractWidget *widget)
+void View::scene_removeRequested(AbstractWidget *widget)
 {
-    auto cmd = new Commands::RemoveWidget{_scene, widget};
+    auto cmd = new RemoveWidgetCommand{_scene, widget};
     _scene->undoStack()->push(cmd);
 }
 
@@ -141,12 +141,12 @@ void View::setZoomLevel(int newZoomLevel)
     setTransform(t);
 }
 
-QAction *View::registerTool(Tools::AbstractTool *tool)
+QAction *View::registerTool(AbstractTool *tool)
 {
     tool->setView(this);
     _tools.insert(tool->metaObject()->className(), tool);
 
-    if (tool->toolType() == Tools::AbstractTool::ToolType::RequireActivation) {
+    if (tool->toolType() == AbstractTool::ToolType::RequireActivation) {
         auto action = new QAction{this};
         action->setText(tool->text());
         connect(action, &QAction::triggered, [tool, this]() {
@@ -189,12 +189,12 @@ void View::setScene(Scene *newScene)
 
 }
 
-Tools::AbstractTool *View::tool() const
+AbstractTool *View::tool() const
 {
     return _scene->activeTool();
 }
 
-void View::setTool(Tools::AbstractTool *tool)
+void View::setTool(AbstractTool *tool)
 {
     _scene->setTool(tool);
 }
@@ -202,11 +202,11 @@ void View::setTool(Tools::AbstractTool *tool)
 void View::createDefaultCommands()
 {
     _scene->setView(this);
-    _relationTool = registerTool<Tools::ConnectWidgets>();
-    _createWidgetTool = registerTool<Tools::CreateWidget>();
-    _magnifierTool = registerTool<Tools::Magnifier>();
+    _relationTool = registerTool<ConnectWidgetsTool>();
+    _createWidgetTool = registerTool<CreateWidgetTool>();
+    _magnifierTool = registerTool<MagnifierTool>();
 
-    connect(_createWidgetTool, &GraphView::Tools::CreateWidget::createObjectRequested, this, &View::scene_createObjectRequested);
+    connect(_createWidgetTool, &GraphView::CreateWidgetTool::createObjectRequested, this, &View::scene_createObjectRequested);
 }
 
 }

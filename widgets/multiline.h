@@ -7,7 +7,7 @@
 #include "core/graphview_global.h"
 
 class QPainter;
-namespace GraphView::Widgets
+namespace GraphView
 {
 
 class MultiLineF// : public QList<QPointF>

@@ -7,12 +7,11 @@ namespace GraphView
 {
 class View;
 class Scene;
-namespace Tools
-{
-class Magnifier : public AbstractTool
+
+class MagnifierTool : public AbstractTool
 {
 public:
-    explicit Magnifier(Scene *scene);
+    explicit MagnifierTool(Scene *scene);
 
     void mousePressed(QGraphicsSceneMouseEvent *mouseEvent) override;
     void mouseMoved(QGraphicsSceneMouseEvent *mouseEvent) override;
@@ -23,5 +22,4 @@ private:
     QPointF _clickPos;
 };
 
-}
 }

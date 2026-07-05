@@ -9,22 +9,17 @@ namespace GraphView
 {
 
 
-namespace Tools
-{
-
-ResizeHandlesProvider::ResizeHandlesProvider(Scene *scene)
+ResizeHandlesProviderTool::ResizeHandlesProviderTool(Scene *scene)
     : AbstractTool{scene}
 {
 //    initHandles();
 }
 
-bool ResizeHandlesProvider::accept(QGraphicsItem *item, QGraphicsSceneMouseEvent *mouseEvent)
+bool ResizeHandlesProviderTool::accept(QGraphicsItem *item, QGraphicsSceneMouseEvent *mouseEvent)
 {
     Q_UNUSED(item)
     Q_UNUSED(mouseEvent)
     return false;
-}
-
 }
 
 }

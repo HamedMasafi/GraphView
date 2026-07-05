@@ -2,7 +2,7 @@
 #include "handles/polylinehandle.h"
 #include "widgets/polylineitem.h"
 
-namespace GraphView::Commands
+namespace GraphView
 {
 
 NodesCommand::NodesCommand() : QUndoCommand{}
@@ -14,9 +14,9 @@ NodesCommand::~NodesCommand()
     qDeleteAll(handleData);
 }
 
-void NodesCommand::addHandle(Handles::AbstractHandle *handle)
+void NodesCommand::addHandle(AbstractHandle *handle)
 {
-    auto polyHandle = qobject_cast<Handles::PolylineHandle *>(handle);
+    auto polyHandle = qobject_cast<PolylineHandle *>(handle);
 
     if (polyHandle) {
         handleData << new HandleData{polyHandle->poly(), polyHandle->pos(), polyHandle->index()};
@@ -43,7 +43,7 @@ void NodesCommand::removeHandles()
     }
 }
 
-AddNodesCommand::AddNodesCommand(Widgets::PolylineItem *item, QPointF point, SizeType handleIndex)
+AddNodesCommand::AddNodesCommand(PolylineItem *item, QPointF point, SizeType handleIndex)
     : NodesCommand{}
 {
     handleData << new HandleData{item, point, handleIndex};

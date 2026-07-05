@@ -7,20 +7,14 @@
 namespace GraphView
 {
 class Scene;
-
-namespace Widgets
-{
 class CrossConnection;
 class ConnectionHandle;
-class Relation;
-}
+class RelationWidget;
 
-namespace Commands
-{
-class SplitRelation : public QUndoCommand
+class SplitRelationCommand : public QUndoCommand
 {
 public:
-    SplitRelation(Scene *scene, Widgets::Relation *from, Widgets::ConnectionHandle *to, const QPointF &intersectPoint);
+    SplitRelationCommand(Scene *scene, RelationWidget *from, ConnectionHandle *to, const QPointF &intersectPoint);
 
 public:
     void undo() override;
@@ -28,20 +22,19 @@ public:
 
 private:
     Scene *_scene;
-    Widgets::Relation *_from;
-    Widgets::ConnectionHandle *_to;
+    RelationWidget *_from;
+    ConnectionHandle *_to;
     const QPointF _intersectPoint;
 
     void createNeededItems();
 
-    Widgets::CrossConnection *_cross{nullptr};
-    Widgets::Relation *_secondPartRelation{nullptr};
-    Widgets::Relation *_newRelation{nullptr};
-    Widgets::ConnectionHandle *_originalTo{nullptr};
-    Widgets::MultiLineF _originalPoly;
-    Widgets::MultiLineF _poly1;
-    Widgets::MultiLineF _poly2;
+    CrossConnection *_cross{nullptr};
+    RelationWidget *_secondPartRelation{nullptr};
+    RelationWidget *_newRelation{nullptr};
+    ConnectionHandle *_originalTo{nullptr};
+    MultiLineF _originalPoly;
+    MultiLineF _poly1;
+    MultiLineF _poly2;
 };
 
-}
 }

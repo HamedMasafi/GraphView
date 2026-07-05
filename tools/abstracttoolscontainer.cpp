@@ -1,6 +1,6 @@
 #include "abstracttoolscontainer.h"
 
-namespace GraphView::Tools
+namespace GraphView
 {
 
 

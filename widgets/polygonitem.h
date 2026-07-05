@@ -3,10 +3,10 @@
 #include "polylineitem.h"
 #include <QPolygonF>
 
-namespace GraphView::Widgets
+namespace GraphView
 {
 
-class PolygonItem : public PolylineItem
+class PolygonItemWidget : public PolylineItemWidget
 {
     Q_OBJECT
 
@@ -19,7 +19,7 @@ public:
     {
         return Type;
     }
-    explicit PolygonItem(QGraphicsItem *parent = nullptr);
+    explicit PolygonItemWidget(QGraphicsItem *parent = nullptr);
 
     void paint(QPainter *p, const QStyleOptionGraphicsItem *opt, QWidget *) override;
 };

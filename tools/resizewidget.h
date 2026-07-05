@@ -5,20 +5,12 @@
 #include <QGraphicsEllipseItem>
 #include <event.h>
 
-
 namespace GraphView{
 
-namespace Impl
-{
-class ResizeHandle;
-};
-
-namespace Widgets{
-
-class ResizeHandle2 :public QGraphicsEllipseItem
+class OldResizeHandle :public QGraphicsEllipseItem
 {
 public:
-    ResizeHandle2();
+    OldResizeHandle();
 
     ResizeDirection resizeDirection() const;
     void setResizeDirection(ResizeDirection newResizeDirection);
@@ -28,15 +20,11 @@ private:
 
 };
 
-}
-
-namespace Tools{
-
-class ResizeWidget : public AbstractTool
+class ResizeWidgetTool : public AbstractTool
 {
     Q_OBJECT
 public:
-    ResizeWidget(Scene *scene);
+    ResizeWidgetTool(Scene *scene);
 
     bool accept(QGraphicsItem *item, QGraphicsSceneMouseEvent *mouseEvent) override;
     void mousePressed(QGraphicsSceneMouseEvent *mouseEvent) override;
@@ -45,27 +33,27 @@ public:
     ToolType toolType() const override;
 
 private Q_SLOTS:
-    void widget_moving(GraphView::Core::MoveEvent *);
+    void widget_moving(MoveEvent *);
     void widget_destroyed(QObject * = nullptr);
 
 private:
     void initHandles();
-    void setHandlesOnItem(Widgets::AbstractWidget *widget);
+    void setHandlesOnItem(AbstractWidget *widget);
     void setVisible(bool visible);
 
-    Impl::ResizeHandle *resizerTL, *resizerT, *resizerTR;
-    Impl::ResizeHandle *resizerL, *resizerR;
-    Impl::ResizeHandle *resizerBL, *resizerB, *resizerBR;
-    QList<Impl::ResizeHandle *> handles;
-    Impl::ResizeHandle *_selectedHandle{nullptr};
-    Widgets::AbstractWidget *_selectedWidget{nullptr};
+    // ResizeHandle from anonymous namespace in cpp
+    QGraphicsEllipseItem *resizerTL, *resizerT, *resizerTR;
+    QGraphicsEllipseItem *resizerL, *resizerR;
+    QGraphicsEllipseItem *resizerBL, *resizerB, *resizerBR;
+    QList<QGraphicsEllipseItem *> handles;
+    QGraphicsEllipseItem *_selectedHandle{nullptr};
+    AbstractWidget *_selectedWidget{nullptr};
 
-    void setResezeHandlePos(Impl::ResizeHandle *handle, QPointF pos);
-    void setResezeHandlePos(Impl::ResizeHandle *handle, QPointF pos1, QPointF pos2);
+    void setResezeHandlePos(QGraphicsEllipseItem *handle, QPointF pos);
+    void setResezeHandlePos(QGraphicsEllipseItem *handle, QPointF pos1, QPointF pos2);
 
     qreal m_scale{1};
     QRectF resizeRect;
 
 };
-}
 }

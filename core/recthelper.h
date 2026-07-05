@@ -3,7 +3,7 @@
 #include <QPointF>
 #include <QRectF>
 
-namespace GraphView::Core{
+namespace GraphView{
 
 QPointF edgePoint(const QRectF &rc, Qt::Alignment align);
 

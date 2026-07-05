@@ -15,18 +15,12 @@ namespace GraphView {
 class BatchCreator;
 class ScenePrivate;
 
-namespace Commands {
-class AddWidget;
-}
+class AddWidgetCommand;
 class View;
-namespace Widgets {
 class AbstractWidget;
-class Relation;
-class ConnectionHandle;
-} // namespace Widgets
-namespace Tools {
+class RelationWidget;
+class ConnectionHandleWidget;
 class AbstractTool;
-}
 class Scene : public QGraphicsScene
 {
     Q_OBJECT
@@ -69,7 +63,7 @@ public:
         Repeat
     };
 
-    using CreatorFunction = std::function<Widgets::AbstractWidget *()>;
+    using CreatorFunction = std::function<AbstractWidget *()>;
 
     enum class Mode { Normal, DragZone };
     enum class GridType { None, Dot, Grid };
@@ -87,7 +81,7 @@ public:
     // void addItem(QGraphicsItem *item) override
     // {
     //     QGraphicsScene::addItem(item);
-    //     auto w = dynamic_cast<Widgets::AbstractWidget *>(item);
+    //     auto w = dynamic_cast<AbstractWidget *>(item);
     //     if (w)
     //         emit widgetAdded(w);
     // }
@@ -95,19 +89,19 @@ public:
     // void removeItem(QGraphicsItem *item) override
     // {
     //     QGraphicsScene::removeItem(item);
-    //     auto w = dynamic_cast<Widgets::AbstractWidget *>(item);
+    //     auto w = dynamic_cast<AbstractWidget *>(item);
     //     if (w)
     //         emit widgetRemoved(w);
     // }
 
-    void addWidget(Widgets::AbstractWidget *widget);
-    void addWidgetOnce(Widgets::AbstractWidget *widget);
-    void removeWidget(Widgets::AbstractWidget *widget);
+    void addWidget(AbstractWidget *widget);
+    void addWidgetOnce(AbstractWidget *widget);
+    void removeWidget(AbstractWidget *widget);
 
-    void addRelation(Widgets::Relation *relation);
-    void removeRelation(Widgets::Relation *relation);
+    void addRelation(RelationWidget *relation);
+    void removeRelation(RelationWidget *relation);
 
-    QList<Widgets::AbstractWidget *> widgets() const;
+    QList<AbstractWidget *> widgets() const;
     QPointF snapPoint(const QPointF &pt) const;
 
     GridType gridType() const;
@@ -120,10 +114,10 @@ public:
     void showTooltip(const QString &text = {}, const QPointF &pos = {});
     void hideTooltip();
 
-    QList<Widgets::Relation *> relations() const;
+    QList<RelationWidget *> relations() const;
 
-    Tools::AbstractTool *activeTool() const;
-    Tools::AbstractTool *tool(const QString &name) const;
+    AbstractTool *activeTool() const;
+    AbstractTool *tool(const QString &name) const;
 
     void alignSelectedWidgets(AlignMode mode);
 
@@ -133,7 +127,7 @@ public:
         return qobject_cast<T *>(tool(T::staticMetaObject.className()));
     }
 
-    void setTool(Tools::AbstractTool *newTool);
+    void setTool(AbstractTool *newTool);
     void setTool(const QString &className);
 
     template<class T>
@@ -142,9 +136,9 @@ public:
         setTool(QString{T::staticMetaObject.className()});
     }
 
-    void selectWidget(Widgets::AbstractWidget *s);
+    void selectWidget(AbstractWidget *s);
 
-    void registerTool(Tools::AbstractTool *tool);
+    void registerTool(AbstractTool *tool);
 
     template<class T>
     T *registerTool()
@@ -178,8 +172,8 @@ public:
     QUndoStack *undoStack() const;
     void pushCommand(QUndoCommand *cmd);
 
-    QList<Widgets::AbstractWidget *> allWidgets() const;
-    QList<Widgets::AbstractWidget *> selectedWidgets() const;
+    QList<AbstractWidget *> allWidgets() const;
+    QList<AbstractWidget *> selectedWidgets() const;
 
     QMarginsF margins() const;
     void setMargins(const QMarginsF &newMargins);
@@ -199,7 +193,7 @@ public:
     bool snapToGrid() const;
     void setSnapToGrid(bool newSnapToGrid);
 
-    GraphView::Widgets::AbstractWidget *createWidget(const QString &name, const QUuid &id = {});
+    AbstractWidget *createWidget(const QString &name, const QUuid &id = {});
 
     void createWidget(const QString &name, const QRectF &rect, const QUuid &id = {});
 
@@ -207,11 +201,11 @@ public:
 
     bool isModified() const;
     void setIsModified(bool newIsModified);
-    GraphView::Widgets::AbstractWidget *widgetById(const QUuid &id) const;
+    AbstractWidget *widgetById(const QUuid &id) const;
 
     QJsonArray dumpSelectedWidgets() const;
-    QList<GraphView::Widgets::AbstractWidget *> pasteWidgets(const QJsonArray &array);
-    Widgets::AbstractWidget *cloneWidget(Widgets::AbstractWidget *widget);
+    QList<AbstractWidget *> pasteWidgets(const QJsonArray &array);
+    AbstractWidget *cloneWidget(AbstractWidget *widget);
     void cloneSelectedWidgets();
 
     void cutSelectedToClipboard();
@@ -220,7 +214,7 @@ public:
 
     void sendSelectedToBack();
     void bringSelectedToFront();
-    void setNameForWidget(Widgets::AbstractWidget *widget, bool force = false);
+    void setNameForWidget(AbstractWidget *widget, bool force = false);
 
     QPixmap backgroundPixmap() const;
     void setBackgroundPixmap(const QPixmap &newBackgroundPixmap);
@@ -246,20 +240,20 @@ protected:
     void drawBackground(QPainter *painter, const QRectF &rect) override;
 
 Q_SIGNALS:
-    void widgetAdded(GraphView::Widgets::AbstractWidget *widget);
-    void widgetRemoved(GraphView::Widgets::AbstractWidget *widget);
+    void widgetAdded(AbstractWidget *widget);
+    void widgetRemoved(AbstractWidget *widget);
     void widgetDropped(QRectF rect, QString name);
-    void widgetDoubleClicked(GraphView::Widgets::AbstractWidget *widget);
+    void widgetDoubleClicked(AbstractWidget *widget);
 
     void createObjectRequested(QRectF rect);
     void mouseRelease(QGraphicsSceneMouseEvent *mouseEvent);
     void mouseMove(QGraphicsSceneMouseEvent *mouseEvent);
     void mousePress(QGraphicsSceneMouseEvent *mouseEvent);
     void drop(QGraphicsSceneDragDropEvent *event);
-    void widgetMoved(GraphView::Widgets::AbstractWidget *widget, QPointF lastPos, QPointF newPos);
-    void widgetsConnectionRequested(GraphView::Widgets::ConnectionHandle *from,
-                                    GraphView::Widgets::ConnectionHandle *to);
-    void removeRequested(GraphView::Widgets::AbstractWidget *widget);
+    void widgetMoved(AbstractWidget *widget, QPointF lastPos, QPointF newPos);
+    void widgetsConnectionRequested(ConnectionHandleWidget *from,
+                                    ConnectionHandleWidget *to);
+    void removeRequested(AbstractWidget *widget);
 
     void marginsChanged();
     void gridTypeChanged();
@@ -286,20 +280,20 @@ private:
     void initBasicCommands();
     void createTooltipItem();
 
-    // Widgets::AbstractWidget *_selectedWidget{nullptr};
-    // QList<Widgets::AbstractWidget *> _widgets;
-    // QList<Widgets::Relation *> _relations;
-    // Widgets::AbstractWidget *_connectFromWidget{nullptr};
+    // AbstractWidget *_selectedWidget{nullptr};
+    // QList<AbstractWidget *> _widgets;
+    // QList<RelationWidget *> _relations;
+    // AbstractWidget *_connectFromWidget{nullptr};
     // QGraphicsRectItem *_dragRect;
     // QGraphicsRectItem *_relationRect;
-    // Widgets::Relation *_relationPreview;
+    // RelationWidget *_relationPreview;
     // QPointF _lastClickPos;
     // Mode _mode{Mode::Normal};
-    // Tools::AbstractTool *_tool{nullptr};
-    // Tools::AbstractTool *_tempTool{nullptr};
-    // QList<Tools::AbstractTool *> _readyTools;
-    // QList<Tools::AbstractTool *> _shadowTools;
-    // QMap<QString, Tools::AbstractTool *> _toolNames;
+    // AbstractTool *_tool{nullptr};
+    // AbstractTool *_tempTool{nullptr};
+    // QList<AbstractTool *> _readyTools;
+    // QList<AbstractTool *> _shadowTools;
+    // QMap<QString, AbstractTool *> _toolNames;
     // QMap<QString, CreatorFunction> _creators;
     // GraphView::View *_view{nullptr};
     // QString _dragCreator{};
@@ -308,10 +302,10 @@ private:
     // QGraphicsTextItem *_tooltipText;
 
     // QUndoStack *_undoStack;
-    // QList<Widgets::AbstractWidget *> _selectedWidgets;
+    // QList<AbstractWidget *> _selectedWidgets;
 
     // GridType _gridType{GridType::Grid};
-    // //    Widgets::WidgetResizer *_resizer;
+    // //    WidgetResizer *_resizer;
     // QSizeF _gridSize{10, 10};
     // QMarginsF m_margins{10, 10, 10, 10};
     // QColor m_gridColor{Qt::gray};
@@ -319,10 +313,10 @@ private:
     // qreal m_gridOpacity{0.8};
     // bool m_snapToGrid{true};
     // bool m_isModified{false};
-    // QMap<QUuid, Widgets::AbstractWidget *> _widgetsById;
+    // QMap<QUuid, AbstractWidget *> _widgetsById;
 
     QExplicitlySharedDataPointer<ScenePrivate> dd;
-    friend class Tools::AbstractTool; // temp
-    friend class Commands::AddWidget;
+    friend class AbstractTool; // temp
+    friend class AddWidgetCommand;
 };
 } // namespace GraphView
