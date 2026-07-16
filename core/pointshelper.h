@@ -3,7 +3,7 @@
 #include <QLineF>
 #include <QPointF>
 
-namespace GraphView
+namespace GraphView::Core
 {
 
 bool equal(const QPointF &pt1, const QPointF &pt2);

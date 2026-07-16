@@ -7,7 +7,7 @@
 #include <QKeyEvent>
 #include <QScrollBar>
 
-namespace GraphView {
+namespace GraphView::Tools {
 
 MoveByModifTool::MoveByModifTool(Scene *scene)
     : AbstractTool{scene}
@@ -80,4 +80,4 @@ void MoveByModifTool::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
     }
 }
 
-} // namespace GraphView
+} // namespace GraphView::Tools

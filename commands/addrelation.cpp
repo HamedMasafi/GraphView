@@ -4,32 +4,49 @@
 #include "scene.h"
 #include "handles/connectionhandle.h"
 
-namespace GraphView
+namespace GraphView::Commands
 {
+//AddRelation::AddRelation(Scene *scene, Widgets::Relation *relation)
+//    : QUndoCommand{}
+//    , _scene{scene}
+//    , _relation{relation}
+//{
+//    setText(QCoreApplication::translate("Commands::AddRelation", "New relation"));
+//}
 
-AddRelationCommand::AddRelationCommand(Scene *scene, ConnectionHandle *from, ConnectionHandle *to)
+AddRelation::AddRelation(Scene *scene, Widgets::ConnectionHandle *from, Widgets::ConnectionHandle *to)
     : QUndoCommand{}
     , _scene{scene}
     , _from{from}
     , _to{to}
 {
-    setText(QCoreApplication::translate("AddRelationCommand", "New relation"));
+    setText(QCoreApplication::translate("Commands::AddRelation", "New relation"));
 }
 
-void AddRelationCommand::redo()
+//AddRelation::AddRelation(Scene *scene, Widgets::ConnectionHandle *from, Widgets::Relation *to, const QPointF &intersectPoint)
+//    : QUndoCommand{}
+//    , _scene{scene}
+//    , _relation{new Widgets::Relation}
+//{
+
+//}
+
+void AddRelation::redo()
 {
     if (!_relation) {
-        _relation = new RelationWidget{_from, _to};
+        _relation = new Widgets::Relation{_from, _to};
+//        _from->setRelation(_relation);
+//        _to->setRelation(_relation);
     }
     _scene->addRelation(_relation);
 }
 
-RelationWidget *AddRelationCommand::relation() const
+Widgets::Relation *AddRelation::relation() const
 {
     return _relation;
 }
 
-void AddRelationCommand::undo()
+void AddRelation::undo()
 {
     _scene->removeRelation(_relation);
     _from->setRelation(nullptr);
@@ -38,4 +55,5 @@ void AddRelationCommand::undo()
     _relation = nullptr;
 }
 
-} // namespace GraphView
+
+} // namespace Commands

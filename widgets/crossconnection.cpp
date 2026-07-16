@@ -3,16 +3,16 @@
 #include <QPainter>
 #include <QPen>
 
-namespace GraphView
+namespace GraphView::Widgets
 {
 
-CrossConnectionWidget::CrossConnectionWidget()
-    : ConnectionHandleWidget{}
+CrossConnection::CrossConnection()
+    : ConnectionHandle{}
 {
     setSize(20, 20);
 }
 
-void CrossConnectionWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void CrossConnection::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option)
     Q_UNUSED(widget)

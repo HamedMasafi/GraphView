@@ -5,21 +5,27 @@
 namespace GraphView
 {
 class Scene;
-class RelationWidget;
 
-class RemoveRelationCommand : public QUndoCommand
+namespace Widgets
+{
+class Relation;
+}
+namespace Commands
+{
+class RemoveRelation : public QUndoCommand
 {
 public:
-    RemoveRelationCommand();
-    RemoveRelationCommand(Scene *scene, RelationWidget *relation);
+    RemoveRelation();
+    RemoveRelation(Scene *scene, Widgets::Relation *relation);
 
     void undo() override;
     void redo() override;
 
 private:
     Scene *_scene;
-    RelationWidget *_relation;
+    Widgets::Relation *_relation;
 
 };
 
+}
 }

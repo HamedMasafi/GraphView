@@ -4,10 +4,10 @@
 
 #include "abstractrectwidget.h"
 
-namespace GraphView
+namespace GraphView::Widgets
 {
 
-class GridViewWidget : public AbstractRectWidget
+class GridView : public AbstractRectWidget
 {
     Q_OBJECT
 
@@ -22,7 +22,7 @@ class GridViewWidget : public AbstractRectWidget
 public:
     enum class GridType { None, Dot, Grid };
 
-    GridViewWidget(QGraphicsItem *parent = nullptr);
+    GridView(QGraphicsItem *parent = nullptr);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
     qreal gridWidth() const;

@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <QPainter>
 
-namespace GraphView
+namespace GraphView::Widgets
 {
 
 namespace {
@@ -25,7 +25,7 @@ void MultiLineF::findNearest(const QPointF &pt)
     qreal bd{};
     bool isFirstLoop{true};
     for (auto i = 0; i < _data.size() - 1; i++) {
-        auto dist = distance(pt, QLineF{at(i), at(i + 1)});
+        auto dist = GraphView::Core::distance(pt, QLineF{at(i), at(i + 1)});
         if (Q_UNLIKELY(isFirstLoop)) {
             bd = dist;
             isFirstLoop = false;
@@ -80,7 +80,7 @@ void MultiLineF::setPointY(int index, qreal y)
 void MultiLineF::reset(const QPointF &from, const QPointF &to)
 {
     _data.clear();
-    if (equal(from, to)) {
+    if (Core::equal(from, to)) {
         _data.append(from);
         _data.append(to);
         return;

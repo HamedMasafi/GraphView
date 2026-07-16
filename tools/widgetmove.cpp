@@ -7,21 +7,21 @@
 #include <QGraphicsSceneEvent>
 #include <QKeyEvent>
 
-namespace GraphView
+namespace GraphView::Tools
 {
-WidgetMoveTool::WidgetMoveTool(Scene *scene)
+WidgetMove::WidgetMove(Scene *scene)
     : AbstractTool{scene}
 {
 }
 
-bool WidgetMoveTool::accept(QGraphicsItem *item, QGraphicsSceneMouseEvent *mouseEvent)
+bool WidgetMove::accept(QGraphicsItem *item, QGraphicsSceneMouseEvent *mouseEvent)
 {
     Q_UNUSED(mouseEvent)
-    _selectedWidget = dynamic_cast<AbstractWidget *>(item);
+    _selectedWidget = dynamic_cast<Widgets::AbstractWidget *>(item);
     return _selectedWidget;
 }
 
-void WidgetMoveTool::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
+void WidgetMove::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (mouseEvent->buttons() & Qt::LeftButton) {
         _clickPos = _selectedWidget->mapFromScene(mouseEvent->scenePos());
@@ -32,21 +32,21 @@ void WidgetMoveTool::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
     }
 }
 
-void WidgetMoveTool::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
+void WidgetMove::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (mouseEvent->buttons() & Qt::LeftButton) {
         auto oldPos = _selectedWidget->mapFromScene(mouseEvent->buttonDownScenePos(Qt::LeftButton));
         _selectedWidget->setPos(_scene->snapPoint(mouseEvent->scenePos() - _clickPos));
-        MoveEvent e{_selectedWidget->pos(), oldPos};
+        Core::MoveEvent e{_selectedWidget->pos(), oldPos};
         Q_EMIT _selectedWidget->moving(&e);
         //    setHandlesOnItem(_selectedWidget->childRect());
     }
 }
 
-void WidgetMoveTool::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
+void WidgetMove::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
 {
     Q_UNUSED(mouseEvent)
-    // auto cmd = new MoveWidgetsCommand{_selectedWidget, _lastPos};
+    // auto cmd = new Commands::MoveWidgets{_selectedWidget, _lastPos};
     // _scene->pushCommand(cmd);
 
     // _selectedWidget->ungrabMouse();

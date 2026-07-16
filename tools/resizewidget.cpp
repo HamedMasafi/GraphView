@@ -14,7 +14,7 @@
 namespace GraphView
 {
 
-namespace {
+namespace Impl {
 
 constexpr int ResizeHandleSize {15};
 
@@ -29,43 +29,49 @@ public:
         setBrush(Qt::green);
     }
 
-    ResizeDirection resizeDirection() const{
+    Widgets::ResizeDirection resizeDirection() const{
         return m_resizeDirection;
     }
-    void setResizeDirection(ResizeDirection newResizeDirection)
+    void setResizeDirection(Widgets::ResizeDirection newResizeDirection)
     {
         m_resizeDirection = newResizeDirection;
     }
 
 private:
-    ResizeDirection m_resizeDirection;
+    Widgets::ResizeDirection m_resizeDirection;
 };
 
 }
-
-OldResizeHandle::OldResizeHandle()
+namespace Widgets
+{
+Widgets::ResizeHandle2::ResizeHandle2()
     : QGraphicsEllipseItem{-5, -5, 5, 5}
 {
     setFlag(QGraphicsItem::ItemIgnoresTransformations);
 }
 
-ResizeDirection OldResizeHandle::resizeDirection() const
+ResizeDirection ResizeHandle2::resizeDirection() const
 {
     return m_resizeDirection;
 }
 
-void OldResizeHandle::setResizeDirection(ResizeDirection newResizeDirection)
+void ResizeHandle2::setResizeDirection(ResizeDirection newResizeDirection)
 {
     m_resizeDirection = newResizeDirection;
 }
 
-ResizeWidgetTool::ResizeWidgetTool(Scene *scene)
+}
+
+namespace Tools
+{
+
+ResizeWidget::ResizeWidget(Scene *scene)
     : AbstractTool{scene}
 {
     initHandles();
 }
 
-bool ResizeWidgetTool::accept(QGraphicsItem *item, QGraphicsSceneMouseEvent *mouseEvent)
+bool ResizeWidget::accept(QGraphicsItem *item, QGraphicsSceneMouseEvent *mouseEvent)
 {
     Q_UNUSED(mouseEvent)
     if (!item) {
@@ -78,7 +84,7 @@ bool ResizeWidgetTool::accept(QGraphicsItem *item, QGraphicsSceneMouseEvent *mou
         return false;
     }
 
-    auto widget = dynamic_cast<AbstractWidget *>(item);
+    auto widget = dynamic_cast<Widgets::AbstractWidget *>(item);
     if (widget) {
         if (_selectedWidget)
             disconnect(_selectedWidget, nullptr, this, nullptr);
@@ -91,20 +97,20 @@ bool ResizeWidgetTool::accept(QGraphicsItem *item, QGraphicsSceneMouseEvent *mou
     if (!_selectedWidget)
         return false;
 
-    connect(_selectedWidget, &AbstractWidget::moving, this, &ResizeWidgetTool::widget_moving);
-    connect(_selectedWidget, &QObject::destroyed, this, &ResizeWidgetTool::widget_destroyed);
+    connect(_selectedWidget, &Widgets::AbstractWidget::moving, this, &ResizeWidget::widget_moving);
+    connect(_selectedWidget, &QObject::destroyed, this, &ResizeWidget::widget_destroyed);
 
     resizeRect = _selectedWidget->childRect();
-    _selectedHandle = dynamic_cast<ResizeHandle *>(item);
+    _selectedHandle = dynamic_cast<Impl::ResizeHandle *>(item);
     return _selectedHandle;
 }
 
-void ResizeWidgetTool::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
+void ResizeWidget::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
 {
     Q_UNUSED(mouseEvent)
 }
 
-void ResizeWidgetTool::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
+void ResizeWidget::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (mouseEvent->buttons() & Qt::LeftButton) {
         if (!_selectedHandle)
@@ -113,13 +119,13 @@ void ResizeWidgetTool::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
 
         QRectF rc = resizeRect;
 
-        if (_selectedHandle->resizeDirection() & Top)
+        if (_selectedHandle->resizeDirection() & Widgets::Top)
             rc.setTop(point.y());
-        if (_selectedHandle->resizeDirection() & Left)
+        if (_selectedHandle->resizeDirection() & Widgets::Left)
             rc.setLeft(point.x());
-        if (_selectedHandle->resizeDirection() & Right)
+        if (_selectedHandle->resizeDirection() & Widgets::Right)
             rc.setRight(point.x());
-        if (_selectedHandle->resizeDirection() & Bottom)
+        if (_selectedHandle->resizeDirection() & Widgets::Bottom)
             rc.setBottom(point.y());
 
         if (rc.isValid()) {
@@ -129,37 +135,37 @@ void ResizeWidgetTool::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
     }
 }
 
-void ResizeWidgetTool::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
+void ResizeWidget::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
 {
     Q_UNUSED(mouseEvent)
     Q_EMIT finished();
 }
 
-AbstractTool::ToolType ResizeWidgetTool::toolType() const
+AbstractTool::ToolType ResizeWidget::toolType() const
 {
     return AbstractTool::ToolType::RequireActivation;
 }
 
-void ResizeWidgetTool::widget_moving(MoveEvent *)
+void ResizeWidget::widget_moving(Core::MoveEvent *)
 {
     setHandlesOnItem(_selectedWidget);
 }
 
-void ResizeWidgetTool::widget_destroyed(QObject *)
+void ResizeWidget::widget_destroyed(QObject *)
 {
     setVisible(false);
 }
 
-void ResizeWidgetTool::initHandles()
+void ResizeWidget::initHandles()
 {
-    resizerTL = new ResizeHandle;
-    resizerT = new ResizeHandle;
-    resizerTR = new ResizeHandle;
-    resizerL = new ResizeHandle;
-    resizerR = new ResizeHandle;
-    resizerBL = new ResizeHandle;
-    resizerB = new ResizeHandle;
-    resizerBR = new ResizeHandle;
+    resizerTL = new Impl::ResizeHandle;
+    resizerT = new Impl::ResizeHandle;
+    resizerTR = new Impl::ResizeHandle;
+    resizerL = new Impl::ResizeHandle;
+    resizerR = new Impl::ResizeHandle;
+    resizerBL = new Impl::ResizeHandle;
+    resizerB = new Impl::ResizeHandle;
+    resizerBR = new Impl::ResizeHandle;
 
     handles.append(resizerTL);
     handles.append(resizerT);
@@ -179,15 +185,15 @@ void ResizeWidgetTool::initHandles()
     resizerB->setCursor(Qt::SizeVerCursor);
     resizerBR->setCursor(Qt::SizeFDiagCursor);
 
-    resizerT->setResizeDirection(Top);
-    resizerL->setResizeDirection(Left);
-    resizerR->setResizeDirection(Right);
-    resizerB->setResizeDirection(Bottom);
+    resizerT->setResizeDirection(Widgets::Top);
+    resizerL->setResizeDirection(Widgets::Left);
+    resizerR->setResizeDirection(Widgets::Right);
+    resizerB->setResizeDirection(Widgets::Bottom);
 
-    resizerTR->setResizeDirection(Top | Right);
-    resizerTL->setResizeDirection(Top | Left);
-    resizerBR->setResizeDirection(Bottom | Right);
-    resizerBL->setResizeDirection(Bottom | Left);
+    resizerTR->setResizeDirection(Widgets::Top | Widgets::Right);
+    resizerTL->setResizeDirection(Widgets::Top | Widgets::Left);
+    resizerBR->setResizeDirection(Widgets::Bottom | Widgets::Right);
+    resizerBL->setResizeDirection(Widgets::Bottom | Widgets::Left);
 
     for (auto &handle : handles) {
         _scene->addItem(handle);
@@ -196,7 +202,7 @@ void ResizeWidgetTool::initHandles()
     } // for
 }
 
-void ResizeWidgetTool::setHandlesOnItem(AbstractWidget *widget)
+void ResizeWidget::setHandlesOnItem(Widgets::AbstractWidget *widget)
 {
     auto rc = widget->childRect();
 
@@ -215,13 +221,13 @@ void ResizeWidgetTool::setHandlesOnItem(AbstractWidget *widget)
         handles.at(i)->setZValue(9999);
 }
 
-void ResizeWidgetTool::setVisible(bool visible)
+void ResizeWidget::setVisible(bool visible)
 {
     for (auto &h : handles)
         h->setVisible(visible);
 }
 
-void ResizeWidgetTool::setResezeHandlePos(QGraphicsEllipseItem *handle, QPointF pos)
+void ResizeWidget::setResezeHandlePos(Impl::ResizeHandle *handle, QPointF pos)
 {
     // qreal scaleHalf = m_scale * CIRCLER / 2;
     handle->setPos(pos); //_selectedWidgets.at(0)->parentItem()->mapToParent(
@@ -230,7 +236,7 @@ void ResizeWidgetTool::setResezeHandlePos(QGraphicsEllipseItem *handle, QPointF 
         // pos.y() - scaleHalf);
 }
 
-void ResizeWidgetTool::setResezeHandlePos(QGraphicsEllipseItem *handle, QPointF pos1, QPointF pos2)
+void ResizeWidget::setResezeHandlePos(Impl::ResizeHandle *handle, QPointF pos1, QPointF pos2)
 {
     // qreal scaleHalf = m_scale * CIRCLER / 2;
     handle->setPos( //_selectedWidgets.at(0)->parentItem()->mapToParent(
@@ -239,4 +245,5 @@ void ResizeWidgetTool::setResezeHandlePos(QGraphicsEllipseItem *handle, QPointF 
         (pos2.y() + pos1.y()) / 2);
 }
 
+}
 }

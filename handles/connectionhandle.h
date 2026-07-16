@@ -3,11 +3,11 @@
 #include "widgets/abstractrectwidget.h"
 #include "graphviewglobal.h"
 
-namespace GraphView
+namespace GraphView::Widgets
 {
 
-class RelationWidget;
-class ConnectionHandleWidget : public AbstractRectWidget
+class Relation;
+class ConnectionHandle : public AbstractRectWidget
 {
     // Q_OBJECT
 public:
@@ -17,7 +17,7 @@ public:
     {
         return Type;
     }
-    explicit ConnectionHandleWidget(QGraphicsItem *parent = nullptr);
+    explicit ConnectionHandle(QGraphicsItem *parent = nullptr);
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
@@ -39,8 +39,8 @@ public:
     static constexpr qreal lenght{30};
     static constexpr qreal thikness{20};
 
-    RelationWidget *relation() const;
-    void setRelation(RelationWidget *newRelation);
+    Relation *relation() const;
+    void setRelation(Relation *newRelation);
 
     QPointF connectionPoint() const;
     QPointF sceneConnectionPoint() const;
@@ -50,7 +50,7 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
 
 private:
-    RelationWidget *_relation{nullptr};
+    Relation *_relation{nullptr};
 
     bool _isSelected{false};
     Qt::Edge _connectionEdge;

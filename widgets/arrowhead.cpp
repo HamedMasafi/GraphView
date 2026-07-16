@@ -2,21 +2,21 @@
 
 #include <QPainter>
 
-namespace GraphView
+namespace GraphView::Widgets
 {
-ArrowHeadWidget::ArrowHeadWidget(QGraphicsItem *parent)
+ArrowHead::ArrowHead(QGraphicsItem *parent)
     : AbstractRectWidget{parent}
 {
 }
 
-void ArrowHeadWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void ArrowHead::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option)
     Q_UNUSED(widget)
     painter->drawPolygon(_arrowPoly);
 }
 
-void ArrowHeadWidget::calculateSize()
+void ArrowHead::calculateSize()
 {
     _arrowPoly.clear();
     switch(_edge){
@@ -52,56 +52,56 @@ void ArrowHeadWidget::calculateSize()
     update();
 }
 
-Qt::Edge ArrowHeadWidget::edge() const
+Qt::Edge ArrowHead::edge() const
 {
     return _edge;
 }
 
-void ArrowHeadWidget::setEdge(Qt::Edge newEdge)
+void ArrowHead::setEdge(Qt::Edge newEdge)
 {
     _edge = newEdge;
     calculateSize();
 }
 
-QPointF ArrowHeadWidget::point() const
+QPointF ArrowHead::point() const
 {
     return _point;
 }
 
-void ArrowHeadWidget::setPoint(QPointF newPoint)
+void ArrowHead::setPoint(QPointF newPoint)
 {
     _point = newPoint;
     calculateSize();
 }
 
-qreal ArrowHeadWidget::length() const
+qreal ArrowHead::length() const
 {
     return _length;
 }
 
-void ArrowHeadWidget::setLength(qreal newLength)
+void ArrowHead::setLength(qreal newLength)
 {
     _length = newLength;
     calculateSize();
 }
 
-qreal ArrowHeadWidget::thickness() const
+qreal ArrowHead::thickness() const
 {
     return _thickness;
 }
 
-void ArrowHeadWidget::setThickness(qreal newThickness)
+void ArrowHead::setThickness(qreal newThickness)
 {
     _thickness = newThickness;
     calculateSize();
 }
 
-QPolygonF ArrowHeadWidget::arrowPoly() const
+QPolygonF ArrowHead::arrowPoly() const
 {
     return _arrowPoly;
 }
 
-void ArrowHeadWidget::setArrowPoly(const QPolygonF &newArrowPoly)
+void ArrowHead::setArrowPoly(const QPolygonF &newArrowPoly)
 {
     _arrowPoly = newArrowPoly;
     calculateSize();

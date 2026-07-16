@@ -4,10 +4,10 @@
 
 #include <QGraphicsItem>
 
-namespace GraphView
+namespace GraphView::Widgets
 {
 
-class ArrowHeadWidget : public AbstractRectWidget
+class ArrowHead : public AbstractRectWidget
 {
 
 public:
@@ -17,7 +17,7 @@ public:
     {
         return Type;
     }
-    ArrowHeadWidget(QGraphicsItem *parent = nullptr);
+    ArrowHead(QGraphicsItem *parent = nullptr);
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 

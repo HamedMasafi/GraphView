@@ -2,15 +2,15 @@
 
 #include <QPainter>
 
-namespace GraphView {
+namespace GraphView::Widgets {
 
-GridViewWidget::GridViewWidget(QGraphicsItem *parent)
+GridView::GridView(QGraphicsItem *parent)
     : AbstractRectWidget{parent}
 {
     setFlag(QGraphicsItem::ItemIsSelectable, false);
 }
 
-void GridViewWidget::createBackgroundBrush()
+void GridView::createBackgroundBrush()
 {
     QImage img{static_cast<int>(m_gridWidth), static_cast<int>(m_gridHeight), QImage::Format_ARGB32};
     QPainter p{&img};
@@ -35,7 +35,7 @@ void GridViewWidget::createBackgroundBrush()
     _backgroundBrush = brush;
 }
 
-void GridViewWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void GridView::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option)
     Q_UNUSED(widget)
@@ -48,12 +48,12 @@ void GridViewWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     painter->restore();
 }
 
-qreal GridViewWidget::gridWidth() const
+qreal GridView::gridWidth() const
 {
     return m_gridWidth;
 }
 
-void GridViewWidget::setGridWidth(qreal newGridWidth)
+void GridView::setGridWidth(qreal newGridWidth)
 {
     if (qFuzzyCompare(m_gridWidth, newGridWidth))
         return;
@@ -62,12 +62,12 @@ void GridViewWidget::setGridWidth(qreal newGridWidth)
     emit gridWidthChanged();
 }
 
-qreal GridViewWidget::gridHeight() const
+qreal GridView::gridHeight() const
 {
     return m_gridHeight;
 }
 
-void GridViewWidget::setGridHeight(qreal newGridHeight)
+void GridView::setGridHeight(qreal newGridHeight)
 {
     if (qFuzzyCompare(m_gridHeight, newGridHeight))
         return;
@@ -76,12 +76,12 @@ void GridViewWidget::setGridHeight(qreal newGridHeight)
     emit gridHeightChanged();
 }
 
-qreal GridViewWidget::opacity() const
+qreal GridView::opacity() const
 {
     return m_opacity;
 }
 
-void GridViewWidget::setOpacity(qreal newOpacity)
+void GridView::setOpacity(qreal newOpacity)
 {
     if (qFuzzyCompare(m_opacity, newOpacity))
         return;
@@ -89,12 +89,12 @@ void GridViewWidget::setOpacity(qreal newOpacity)
     emit opacityChanged();
 }
 
-QMarginsF GridViewWidget::margins() const
+QMarginsF GridView::margins() const
 {
     return m_margins;
 }
 
-void GridViewWidget::setMargins(const QMarginsF &newMargins)
+void GridView::setMargins(const QMarginsF &newMargins)
 {
     if (m_margins == newMargins)
         return;
@@ -102,12 +102,12 @@ void GridViewWidget::setMargins(const QMarginsF &newMargins)
     emit marginsChanged();
 }
 
-QColor GridViewWidget::backgroundColor() const
+QColor GridView::backgroundColor() const
 {
     return m_backgroundColor;
 }
 
-void GridViewWidget::setBackgroundColor(const QColor &newBackgroundColor)
+void GridView::setBackgroundColor(const QColor &newBackgroundColor)
 {
     if (m_backgroundColor == newBackgroundColor)
         return;
@@ -116,12 +116,12 @@ void GridViewWidget::setBackgroundColor(const QColor &newBackgroundColor)
     emit backgroundColorChanged();
 }
 
-QColor GridViewWidget::gridColor() const
+QColor GridView::gridColor() const
 {
     return m_gridColor;
 }
 
-void GridViewWidget::setGridColor(const QColor &newGridColor)
+void GridView::setGridColor(const QColor &newGridColor)
 {
     if (m_gridColor == newGridColor)
         return;
@@ -130,12 +130,12 @@ void GridViewWidget::setGridColor(const QColor &newGridColor)
     emit gridColorChanged();
 }
 
-GridViewWidget::GridType GridViewWidget::gridType() const
+GridView::GridType GridView::gridType() const
 {
     return _gridType;
 }
 
-void GridViewWidget::setGridType(GridType newGridType)
+void GridView::setGridType(GridType newGridType)
 {
     if (_gridType == newGridType)
         return;
@@ -145,4 +145,4 @@ void GridViewWidget::setGridType(GridType newGridType)
     emit gridTypeChanged();
 }
 
-} // namespace GraphView
+} // namespace GraphView::Widgets

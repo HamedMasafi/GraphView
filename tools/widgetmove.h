@@ -4,13 +4,17 @@
 
 namespace GraphView
 {
-
-class WidgetMoveTool : public AbstractTool
+namespace Widgets{
+class AbstractWidget;
+}
+namespace Tools
+{
+class WidgetMove : public AbstractTool
 {
     Q_OBJECT
 public:
     Q_DECL_DEPRECATED
-    WidgetMoveTool(Scene *scene);
+    WidgetMove(Scene *scene);
 
     bool accept(QGraphicsItem *item, QGraphicsSceneMouseEvent *mouseEvent) override;
     void mousePressed(QGraphicsSceneMouseEvent *mouseEvent) override;
@@ -18,7 +22,7 @@ public:
     void mouseReleased(QGraphicsSceneMouseEvent *mouseEvent) override;
 
 private:
-    AbstractWidget *_selectedWidget{nullptr};
+    Widgets::AbstractWidget *_selectedWidget{nullptr};
     QPointF _clickPos;
     bool _wasMoved{false};
     QRectF resizeRect;
@@ -26,4 +30,5 @@ private:
 
 };
 
+}
 }

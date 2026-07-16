@@ -5,10 +5,10 @@
 
 #include <QDebug>
 
-namespace GraphView {
+namespace GraphView::Commands {
 
-ChangeStateCommand::ChangeStateCommand(Scene *scene,
-                         AbstractWidget *widget,
+ChangeState::ChangeState(Scene *scene,
+                         Widgets::AbstractWidget *widget,
                          const QJsonObject &oldState,
                          const QJsonObject &newState)
     : _scene{scene}
@@ -19,23 +19,23 @@ ChangeStateCommand::ChangeStateCommand(Scene *scene,
     setText(QObject::tr("Change properties"));
 }
 
-void ChangeStateCommand::undo()
+void ChangeState::undo()
 {
     auto w = _scene->widgetById(_id);
     if (w)
         w->restoreState(_oldState);
 }
 
-void ChangeStateCommand::redo()
+void ChangeState::redo()
 {
     auto w = _scene->widgetById(_id);
     if (w)
         w->restoreState(_newState);
 }
 
-ChangePropertyCommand::ChangePropertyCommand(Scene *scene,
+ChangeProperty::ChangeProperty(Scene *scene,
                                const QString &propertyName,
-                               AbstractWidget *widget,
+                               Widgets::AbstractWidget *widget,
                                const QVariant &oldValue,
                                const QVariant &newValue)
     : _scene{scene}
@@ -47,18 +47,18 @@ ChangePropertyCommand::ChangePropertyCommand(Scene *scene,
     setText(QObject::tr("Change propertiy"));
 }
 
-void ChangePropertyCommand::undo()
+void ChangeProperty::undo()
 {
     auto w = _scene->widgetById(_id);
     if (w && !w->setProperty(_propertyName.toUtf8(), _oldValue))
         qWarning() << "Unable to set property " << _propertyName << " for " << w;
 }
 
-void ChangePropertyCommand::redo()
+void ChangeProperty::redo()
 {
     auto w = _scene->widgetById(_id);
     if (w && !w->setProperty(_propertyName.toUtf8(), _newValue))
         qWarning() << "Unable to set property " << _propertyName << " for " << w;
 }
 
-} // namespace GraphView
+} // namespace GraphView::Commands

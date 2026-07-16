@@ -13,17 +13,22 @@
 namespace GraphView
 {
 
-bool HilightRectWidget::isObscuredBy(const QGraphicsItem *item) const
+namespace Widgets {
+
+bool HilightRect::isObscuredBy(const QGraphicsItem *item) const
 {
     Q_UNUSED(item)
     return false;
 }
 
-ConnectWidgetsTool::ConnectWidgetsTool(Scene *scene)
-    : AbstractTool{scene}
-    , _crossConnection{new CrossConnection}
+}
+namespace Tools
 {
-//    _relationRect = new HilightRectWidget;
+ConnectWidgets::ConnectWidgets(Scene *scene)
+    : AbstractTool{scene}
+    , _crossConnection{new Widgets::CrossConnection}
+{
+//    _relationRect = new Widgets::HilightRect;
 //    _relationRect->setPen(QPen{Qt::darkBlue, 3});
 //    _relationRect->hide();
 //    _relationRect->setZValue(9999);
@@ -32,15 +37,15 @@ ConnectWidgetsTool::ConnectWidgetsTool(Scene *scene)
     _crossConnection->hide();
     _scene->addItem(_crossConnection);
 
-    _relationPreview = new RelationWidget;
+    _relationPreview = new GraphView::Widgets::Relation;
     //    _relationPreview->hide();
     _scene->addItem(_relationPreview);
 }
 
-bool ConnectWidgetsTool::accept(QGraphicsItem *item, QGraphicsSceneMouseEvent *mouseEvent)
+bool ConnectWidgets::accept(QGraphicsItem *item, QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (mouseEvent->button() == Qt::LeftButton) {
-        auto handle = dynamic_cast<ConnectionHandleWidget *>(item);
+        auto handle = dynamic_cast<Widgets::ConnectionHandle *>(item);
         if (!handle)
             return false;
         _connectMode = ConnectMode::FromHandle;
@@ -60,7 +65,7 @@ bool ConnectWidgetsTool::accept(QGraphicsItem *item, QGraphicsSceneMouseEvent *m
 
     } else if (mouseEvent->button() == Qt::RightButton) {
         _sceneRelations = _scene->relations();
-        auto i = std::find_if(_sceneRelations.begin(), _sceneRelations.end(), [&mouseEvent, this](RelationWidget *r) {
+        auto i = std::find_if(_sceneRelations.begin(), _sceneRelations.end(), [&mouseEvent, this](Widgets::Relation *r) {
             return r->intersect(mouseEvent->scenePos(), &_sourcePoint);
         });
 
@@ -87,11 +92,11 @@ bool ConnectWidgetsTool::accept(QGraphicsItem *item, QGraphicsSceneMouseEvent *m
     return true;
 }
 
-void ConnectWidgetsTool::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
+void ConnectWidgets::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
 {
     _sceneRelations = _scene->relations();
-    AbstractWidget *w;
-    ConnectionHandleWidget *ch;
+    Widgets::AbstractWidget *w;
+    Widgets::ConnectionHandle *ch;
     if (hilightHandleUnderCursor(mouseEvent, w, ch)) {
     } else {
         qDebug() << "No source";
@@ -100,7 +105,7 @@ void ConnectWidgetsTool::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
 
 }
 
-void ConnectWidgetsTool::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
+void ConnectWidgets::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
 {
 //    if ((mouseEvent->buttons() & Qt::RightButton) == Qt::RightButton) {
 //        _relation->setTo(mouseEvent->scenePos());
@@ -108,8 +113,8 @@ void ConnectWidgetsTool::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
 //    if (!_connectSourceWidget)
 //        return;
 
-    AbstractWidget *w{};
-    ConnectionHandleWidget *ch{};
+    Widgets::AbstractWidget *w{};
+    Widgets::ConnectionHandle *ch{};
 //    _connectMode = ConnectMode::None;
     if (hilightHandleUnderCursor(mouseEvent, w, ch)) {
         if (ch != _source && ch != _destination) {
@@ -129,7 +134,7 @@ void ConnectWidgetsTool::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
     }
 }
 
-void ConnectWidgetsTool::nullAllSelectedItems()
+void GraphView::Tools::ConnectWidgets::nullAllSelectedItems()
 {
 //    _relationPreview->reset();// setFrom(nullptr);
 //    _relationPreview->setTo(nullptr);
@@ -140,12 +145,12 @@ void ConnectWidgetsTool::nullAllSelectedItems()
     _connectSourceWidget = nullptr;
 }
 
-void ConnectWidgetsTool::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
+void ConnectWidgets::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
 {
     _relationPreview->reset();
     _crossConnection->hide();
     _relationPreview->hide();
-    AbstractWidget *w{};
+    Widgets::AbstractWidget *w{};
     hilightHandleUnderCursor(mouseEvent, w, _destination);
     if (_source)
         _source->setIsSelected(false);
@@ -158,21 +163,21 @@ void ConnectWidgetsTool::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
     }
 
     if (_moveType == MoveType::ExistingRelation) {
-        auto cmd = new ChangeRelationCommand{_scene, _relation, _source, _destination};
+        auto cmd = new Commands::ChangeRelation{_scene, _relation, _source, _destination};
         _scene->pushCommand(cmd);
     } else {
         switch (_connectMode) {
         case ConnectMode::None:
             break;
         case ConnectMode::FromHandle: {
-            auto cmd = new AddRelationCommand{_scene, _source, _destination};
+            auto cmd = new Commands::AddRelation{_scene, _source, _destination};
             _scene->pushCommand(cmd);
             break;
         }
         case ConnectMode::FromLine:
             if (_destination)
                 qDebug() << "No dest";
-            auto cmd = new SplitRelationCommand{_scene, _sourceRelation, _destination, _sourcePoint};
+            auto cmd = new Commands::SplitRelation{_scene, _sourceRelation, _destination, _sourcePoint};
             _scene->pushCommand(cmd);
             break;
         }
@@ -182,7 +187,7 @@ void ConnectWidgetsTool::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
     Q_EMIT AbstractTool::finished();
     // return;
     // auto item = _scene->itemAt(mouseEvent->scenePos(), QTransform());
-    // auto ch = dynamic_cast<ConnectionHandleWidget *>(item);
+    // auto ch = dynamic_cast<Widgets::ConnectionHandle *>(item);
     // if (!ch) {
     //     _relationPreview->hide();
     //     Q_EMIT AbstractTool::finished();
@@ -190,7 +195,7 @@ void ConnectWidgetsTool::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
     // }
 
     // _destination = ch;
-    // w = dynamic_cast<AbstractWidget *>(ch->parentItem());
+    // w = dynamic_cast<Widgets::AbstractWidget *>(ch->parentItem());
     // qDebug() << "Released at" << mouseEvent->scenePos() << (int *)_connectSourceWidget << item << (int *)w;
 
     // if (_connectSourceWidget && w) {
@@ -207,32 +212,32 @@ void ConnectWidgetsTool::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
     // Q_EMIT AbstractTool::finished();
 }
 
-QString ConnectWidgetsTool::text() const
+QString ConnectWidgets::text() const
 {
     return "Connect widgets";
 }
 
-void ConnectWidgetsTool::deactivate()
+void ConnectWidgets::deactivate()
 {
     _relationPreview->hide();
 }
 
-AbstractTool::ToolType ConnectWidgetsTool::toolType() const
+AbstractTool::ToolType ConnectWidgets::toolType() const
 {
     return AbstractTool::ToolType::RequireActivation;
 }
 
-bool ConnectWidgetsTool::hilightHandleUnderCursor(QGraphicsSceneMouseEvent *mouseEvent, AbstractWidget *&w, ConnectionHandleWidget *&ch)
+bool ConnectWidgets::hilightHandleUnderCursor(QGraphicsSceneMouseEvent *mouseEvent, Widgets::AbstractWidget *&w, Widgets::ConnectionHandle *&ch)
 {
     auto item = _scene->itemAt(mouseEvent->scenePos(), QTransform());
     //    qDebug() << "item" << item;
-    ch = dynamic_cast<ConnectionHandleWidget *>(item);
+    ch = dynamic_cast<Widgets::ConnectionHandle *>(item);
     if (!ch || ch->relation()) {
         //        qDebug() << "no handle";
         return false;
     }
 
-    w = dynamic_cast<AbstractWidget *>(item->parentItem());
+    w = dynamic_cast<Widgets::AbstractWidget *>(item->parentItem());
     if (!w) {
         //        qDebug() << "no widget";
         return false;
@@ -246,5 +251,6 @@ bool ConnectWidgetsTool::hilightHandleUnderCursor(QGraphicsSceneMouseEvent *mous
     ch->setIsSelected(true);
 
     return true;
+}
 }
 }

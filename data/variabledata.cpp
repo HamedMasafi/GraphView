@@ -1,6 +1,6 @@
 #include "variabledata.h"
 
-namespace GraphView {
+namespace Data {
 
 VariableData::VariableData()
     : AbstractData{AbstractData::Type::Variable}
@@ -26,4 +26,4 @@ void VariableData::setName(const QString &newName)
     _name = newName;
 }
 
-} // namespace GraphView
+} // namespace Data

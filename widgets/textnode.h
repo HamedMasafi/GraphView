@@ -8,9 +8,9 @@
 // class AbstractData;
 // }
 
-// namespace GraphView
+// namespace GraphView::Widgets
 // {
-// class ConnectionHandleWidget;
+// class ConnectionHandle;
 
 // class TextNode : public AbstractWidget
 // {
@@ -41,14 +41,14 @@
 //     Data::AbstractData *data() const;
 //     void setData(Data::AbstractData *newData);
 
-//     void addConnection(ConnectionHandleWidget *handle);
-//     ConnectionHandleWidget *addConnection(Qt::Edge edge);
+//     void addConnection(ConnectionHandle *handle);
+//     ConnectionHandle *addConnection(Qt::Edge edge);
 
-//     ConnectionHandleWidget *removeConnection(Qt::Edge edge);
+//     GraphView::Widgets::ConnectionHandle *removeConnection(Qt::Edge edge);
 
-//     int connectionHandleIndex(ConnectionHandleWidget *handle) const;
-//     ConnectionHandleWidget *connectionHandle(int index) const;
-//     QList<ConnectionHandleWidget *> connectionHandles(ConnectionType connectionType) const;
+//     int connectionHandleIndex(GraphView::Widgets::ConnectionHandle *handle) const;
+//     GraphView::Widgets::ConnectionHandle *connectionHandle(int index) const;
+//     QList<GraphView::Widgets::ConnectionHandle *> connectionHandles(ConnectionType connectionType) const;
 
 // private Q_SLOTS:
 //     void slotLoadData();

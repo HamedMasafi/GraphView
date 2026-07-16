@@ -4,10 +4,10 @@
 #include <QPainter>
 #include <scene.h>
 
-namespace GraphView
+namespace GraphView::Tools
 {
 
-CrossPointerTool::CrossPointerTool(Scene *scene)
+CrossPointer::CrossPointer(Scene *scene)
     : AbstractTool{scene}
 {
     _verticalLine = _scene->addLine(0, 0, 0, 0);
@@ -18,7 +18,7 @@ CrossPointerTool::CrossPointerTool(Scene *scene)
     _horizontalLine->setPen(p);
 }
 
-void CrossPointerTool::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
+void CrossPointer::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
 {
     auto rc = _scene->sceneRect();
 
@@ -26,7 +26,7 @@ void CrossPointerTool::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
     _horizontalLine->setLine(rc.left(), mouseEvent->scenePos().y(), rc.right(), mouseEvent->scenePos().y());
 }
 
-AbstractTool::ToolType CrossPointerTool::toolType() const
+AbstractTool::ToolType CrossPointer::toolType() const
 {
     return ToolType::AlwaysListener;
 }

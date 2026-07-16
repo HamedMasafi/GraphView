@@ -5,25 +5,34 @@
 namespace GraphView
 {
 class Scene;
-class ConnectionHandle;
-class RelationWidget;
 
-class AddRelationCommand : public QUndoCommand
+namespace Widgets
+{
+class ConnectionHandle;
+class Relation;
+}
+
+namespace Commands
+{
+class AddRelation : public QUndoCommand
 {
 public:
-    AddRelationCommand(Scene *scene, ConnectionHandle *from, ConnectionHandle *to);
+//    AddRelation(Scene *scene, Widgets::Relation *relation);
+    AddRelation(Scene *scene, Widgets::ConnectionHandle *from, Widgets::ConnectionHandle *to);
+//    AddRelation(Scene *scene, Widgets::ConnectionHandle *from, Widgets::Relation *to, const QPointF &intersectPoint);
 
 public:
     void undo() override;
     void redo() override;
 
-    RelationWidget *relation() const;
+    Widgets::Relation *relation() const;
 
 private:
     Scene *_scene;
-    RelationWidget *_relation{nullptr};
-    ConnectionHandle *_from;
-    ConnectionHandle *_to;
+    Widgets::Relation *_relation{nullptr};
+    Widgets::ConnectionHandle *_from;
+    Widgets::ConnectionHandle *_to;
 };
 
+} // namespace Commands
 }

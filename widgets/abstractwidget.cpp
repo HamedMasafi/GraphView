@@ -5,10 +5,10 @@
 #include "core/jsonserialize.h"
 #include "handles/connectionhandle.h"
 
-namespace GraphView {
+namespace GraphView::Widgets {
 AbstractWidget::AbstractWidget(QGraphicsItem *parent)
     : QGraphicsObject{parent}
-    , _resizeDirection{None}
+    , _resizeDirection{Widgets::None}
 {
     setFlag(QGraphicsItem::ItemIsSelectable);
 }
@@ -59,6 +59,7 @@ QRectF AbstractWidget::childRect() const
 
 void AbstractWidget::saveState(QJsonObject &map) const
 {
+    using namespace Core;
     map.insert("__childRect", toJson(childRect()));
     map.insert("__objectName", toJson(objectName()));
     map.insert("__className", toJson(_className));
@@ -67,6 +68,8 @@ void AbstractWidget::saveState(QJsonObject &map) const
 
 void AbstractWidget::restoreState(const QJsonObject &map)
 {
+    using namespace Core;
+
     setRect(fromJson<QRectF>(map["__childRect"]));
     setObjectName(fromJson<QString>(map["__objectName"]));
     // _className = fromJson<QString>(map["__className"]);
@@ -248,4 +251,4 @@ qreal AbstractWidget::width() const
     return _size.width();
 }
 
-} // namespace GraphView
+} // namespace GraphView::Widgets

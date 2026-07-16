@@ -1,6 +1,6 @@
 #include "widgetviewproxy.h"
 
-namespace GraphView {
+namespace GraphView::Widgets {
 
 WidgetViewProxy::WidgetViewProxy()
     : QGraphicsProxyWidget{}
@@ -12,4 +12,4 @@ bool WidgetViewProxy::sceneEvent(QEvent *event)
     return false;
 }
 
-} // namespace GraphView
+} // namespace GraphView::Widgets

@@ -4,7 +4,7 @@
 
 #include <QGraphicsItemGroup>
 
-namespace GraphView
+namespace GraphView::Widgets
 {
 
 class AbstractRectWidget : public AbstractWidget

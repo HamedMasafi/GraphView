@@ -5,21 +5,28 @@
 namespace GraphView
 {
 class Scene;
-class AbstractWidget;
 
-class RemoveWidgetCommand : public QUndoCommand
+namespace Widgets
+{
+class AbstractWidget;
+}
+
+namespace Commands
+{
+class RemoveWidget : public QUndoCommand
 {
 public:
-    RemoveWidgetCommand(Scene *scene, AbstractWidget *item);
-    RemoveWidgetCommand(Scene *scene, QList<AbstractWidget *> items);
+    RemoveWidget(Scene *scene, Widgets::AbstractWidget *item);
+    RemoveWidget(Scene *scene, QList<Widgets::AbstractWidget *> items);
 
     void undo() override;
     void redo() override;
 
 private:
     Scene *_scene;
-    QList<AbstractWidget *> _items;
+    QList<Widgets::AbstractWidget *> _items;
     QList<QUuid> _ids;
 };
 
+}
 }

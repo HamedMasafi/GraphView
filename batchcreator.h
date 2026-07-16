@@ -4,10 +4,10 @@
 
 namespace GraphView {
 
-class BatchCreator : public AddWidgetsCommand
+class BatchCreator : public Commands::AddWidgets
 {
 public:
-    using AddWidgetsCommand::AddWidgetsCommand;
+    using Commands::AddWidgets::AddWidgets;
 
     void apply();
 };

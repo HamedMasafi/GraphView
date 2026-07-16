@@ -6,12 +6,15 @@
 
 namespace GraphView {
 class Scene;
+namespace Widgets {
 class AbstractWidget;
+}
 
-class MoveWidgetsCommand : public QUndoCommand
+namespace Commands {
+class MoveWidgets : public QUndoCommand
 {
 public:
-    MoveWidgetsCommand(Scene *scene);
+    MoveWidgets(GraphView::Scene *scene);
 
     void undo() override;
     void redo() override;
@@ -26,7 +29,8 @@ private:
         QUuid id;
     };
     QList<WidgetData> _data;
-    Scene *_scene;
+    GraphView::Scene *_scene;
 };
 
+} // namespace Commands
 } // namespace GraphView

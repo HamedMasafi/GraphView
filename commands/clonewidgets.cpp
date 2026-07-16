@@ -5,23 +5,23 @@
 
 #include <QJsonArray>
 
-namespace GraphView {
+namespace GraphView::Commands {
 
-CloneWidgetsCommand::CloneWidgetsCommand(Scene *scene)
+CloneWidgets::CloneWidgets(Scene *scene)
     : QUndoCommand{}
     , _scene{scene}
 {
     _data = _scene->dumpSelectedWidgets();
 }
 
-void CloneWidgetsCommand::undo() {
+void CloneWidgets::undo() {
     for (auto &w : _createdWidgets) {
         _scene->removeWidget(w);
     }
     _createdWidgets.clear();
 }
 
-void CloneWidgetsCommand::redo()
+void CloneWidgets::redo()
 {
     _createdWidgets = _scene->pasteWidgets(_data);
 
@@ -32,4 +32,4 @@ void CloneWidgetsCommand::redo()
     }
 }
 
-} // namespace GraphView
+} // namespace GraphView::Commands

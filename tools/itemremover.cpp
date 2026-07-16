@@ -8,14 +8,14 @@
 #include <QGraphicsSceneEvent>
 #include <QKeyEvent>
 
-namespace GraphView
+namespace GraphView::Tools
 {
-ItemRemoverTool::ItemRemoverTool(Scene *scene)
+ItemRemover::ItemRemover(Scene *scene)
     : AbstractTool{scene}
 {
 }
 
-// void ItemRemoverTool::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
+// void ItemRemover::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
 // {
     // auto item = _scene->itemAt(mouseEvent->scenePos(), QTransform());
 
@@ -27,34 +27,34 @@ ItemRemoverTool::ItemRemoverTool(Scene *scene)
     //     }
     // _relation = nullptr;
 
-    // _widget = dynamic_cast<AbstractWidget *>(item);
+    // _widget = dynamic_cast<Widgets::AbstractWidget *>(item);
 // }
 
-void ItemRemoverTool::keyPressEvent(QKeyEvent *event)
+void ItemRemover::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Delete) {
         qDebug() << Q_FUNC_INFO;
-        QList<AbstractWidget *> widgets = _scene->selectedWidgets();
+        QList<Widgets::AbstractWidget *> widgets = _scene->selectedWidgets();
 
         // for (auto &item : selectedItems) {
-        //     auto widget = qgraphicsitem_cast<AbstractWidget*>(item);
+        //     auto widget = qgraphicsitem_cast<Widgets::AbstractWidget*>(item);
         //     if (widget)
         //         widgets << widget;
         // }
 
         if (widgets.size()) {
-            _scene->pushCommand(new RemoveWidgetCommand{_scene, widgets});
+            _scene->pushCommand(new Commands::RemoveWidget{_scene, widgets});
             // _widget = nullptr;
         }
         // if (_relation) {
-        //     auto cmd = new RemoveRelationCommand{_scene, _relation};
+        //     auto cmd = new Commands::RemoveRelation{_scene, _relation};
         //     _scene->pushCommand(cmd);
         //     _relation = nullptr;
         // }
     }
 }
 
-AbstractTool::ToolType ItemRemoverTool::toolType() const
+AbstractTool::ToolType ItemRemover::toolType() const
 {
     return AbstractTool::ToolType::AlwaysListener;
 }

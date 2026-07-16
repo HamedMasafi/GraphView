@@ -7,7 +7,7 @@
 #include <QCoreApplication>
 #include <QJsonObject>
 
-namespace GraphView {
+namespace GraphView::Commands {
 
 struct WidgetChangeData
 {
@@ -15,10 +15,10 @@ struct WidgetChangeData
     QString className;
     QRectF rect;
     QJsonObject state;
-    AbstractWidget *widget{};
+    Widgets::AbstractWidget *widget{};
 };
 
-void AddWidgetsCommand::add(const QString &className,
+void AddWidgets::add(const QString &className,
                      const QRectF &rect,
                      const QJsonObject &state,
                      const QUuid &id)
@@ -31,27 +31,27 @@ void AddWidgetsCommand::add(const QString &className,
     _data << d;
 
     if (_data.size() > 1)
-        setText(QCoreApplication::translate("AddWidgetsCommand", "Add widgets"));
+        setText(QCoreApplication::translate("GraphView::Commands::AddWidgets", "Add widgets"));
     else
-        setText(QCoreApplication::translate("AddWidgetsCommand", "Add widget"));
+        setText(QCoreApplication::translate("GraphView::Commands::AddWidgets", "Add widget"));
 }
 
-void AddWidgetsCommand::undo()
+void AddWidgets::undo()
 {
     removeAll();
 }
 
-void AddWidgetsCommand::redo()
+void AddWidgets::redo()
 {
     createAll();
 }
 
-AbstractAddRemoveWidgetsCommand::AbstractAddRemoveWidgetsCommand(ScenePrivate *sceneData)
+AbstractAddRemoveWidgets::AbstractAddRemoveWidgets(ScenePrivate *sceneData)
     : QUndoCommand{}
     , _sceneData{sceneData}
 {}
 
-void AbstractAddRemoveWidgetsCommand::createAll()
+void AbstractAddRemoveWidgets::createAll()
 {
     for (auto &d : _data) {
         d->widget = _sceneData->createWidget(d->className, d->id);
@@ -61,7 +61,7 @@ void AbstractAddRemoveWidgetsCommand::createAll()
     }
 }
 
-void AbstractAddRemoveWidgetsCommand::removeAll()
+void AbstractAddRemoveWidgets::removeAll()
 {
     for (auto &d : _data) {
         _sceneData->removeWidget(d->widget);
@@ -69,4 +69,4 @@ void AbstractAddRemoveWidgetsCommand::removeAll()
     }
 }
 
-} // namespace GraphView
+} // namespace GraphView::Commands

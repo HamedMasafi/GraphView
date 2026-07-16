@@ -6,13 +6,13 @@
 #include "scene.h"
 #include "widgets/abstractwidget.h"
 
-namespace GraphView {
+namespace GraphView::Tools {
 
-MoveWidgetsByArrowKeysTool::MoveWidgetsByArrowKeysTool(Scene *scene)
+MoveWidgetsByArrowKeys::MoveWidgetsByArrowKeys(Scene *scene)
     : AbstractTool{scene}
 {}
 
-void MoveWidgetsByArrowKeysTool::keyReleaseEvent(QKeyEvent *event)
+void MoveWidgetsByArrowKeys::keyReleaseEvent(QKeyEvent *event)
 {
     if (event->modifiers() == Qt::ControlModifier)
         moveSelectedWidgets(static_cast<Qt::Key>(event->key()), 50);
@@ -22,11 +22,11 @@ void MoveWidgetsByArrowKeysTool::keyReleaseEvent(QKeyEvent *event)
         moveSelectedWidgets(static_cast<Qt::Key>(event->key()), 1);
 }
 
-void MoveWidgetsByArrowKeysTool::moveSelectedWidgets(Qt::Key key, qreal distance)
+void MoveWidgetsByArrowKeys::moveSelectedWidgets(Qt::Key key, qreal distance)
 {
     auto widgets = _scene->selectedWidgets();
 
-    for (AbstractWidget *w : std::as_const(widgets)) {
+    for (Widgets::AbstractWidget *w : std::as_const(widgets)) {
         switch (key) {
         case Qt::Key_Left:
             w->setPos(w->pos().x() - distance, w->pos().y());
@@ -47,14 +47,14 @@ void MoveWidgetsByArrowKeysTool::moveSelectedWidgets(Qt::Key key, qreal distance
     }
 }
 
-QString MoveWidgetsByArrowKeysTool::text() const
+QString MoveWidgetsByArrowKeys::text() const
 {
     return "Move widgets by arrow keys";
 }
 
-AbstractTool::ToolType MoveWidgetsByArrowKeysTool::toolType() const
+AbstractTool::ToolType MoveWidgetsByArrowKeys::toolType() const
 {
     return ToolType::AlwaysListener;
 }
 
-} // namespace GraphView
+} // namespace GraphView::Tools

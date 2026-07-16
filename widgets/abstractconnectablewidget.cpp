@@ -4,7 +4,7 @@
 
 #include <QGraphicsLinearLayout>
 
-namespace GraphView {
+namespace GraphView::Widgets {
 
 AbstractConnectableWidget::AbstractConnectableWidget(QGraphicsItem *parent)
     : AbstractRectWidget{parent}
@@ -12,7 +12,7 @@ AbstractConnectableWidget::AbstractConnectableWidget(QGraphicsItem *parent)
 
 void AbstractConnectableWidget::addConnectionNode(Qt::Edge edge)
 {
-    auto handle = new ConnectionHandleWidget{this};
+    auto handle = new ConnectionHandle{this};
    _connectionHandles.insert(edge, handle);
 }
 
@@ -20,4 +20,4 @@ void AbstractConnectableWidget::resized() {
 
 }
 
-} // namespace GraphView
+} // namespace GraphView::Widgets

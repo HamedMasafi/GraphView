@@ -6,20 +6,24 @@
 
 namespace GraphView
 {
-class RelationWidget;
-class ConnectionHandleWidget;
+namespace Widgets
+{
+class Relation;
+class ConnectionHandle;
 class CrossConnection;
 
-class HilightRectWidget : public QGraphicsRectItem
+class HilightRect : public QGraphicsRectItem
 {
 public:
     bool isObscuredBy(const QGraphicsItem *item) const;
 };
-
-class ConnectWidgetsTool : public AbstractTool
+}
+namespace Tools
+{
+class ConnectWidgets : public AbstractTool
 {
 public:
-    explicit ConnectWidgetsTool(Scene *scene);
+    explicit ConnectWidgets(Scene *scene);
 
     bool accept(QGraphicsItem *item, QGraphicsSceneMouseEvent *mouseEvent) override;
     void mousePressed(QGraphicsSceneMouseEvent *mouseEvent) override;
@@ -30,7 +34,7 @@ public:
     ToolType toolType() const override;
 
 Q_SIGNALS:
-    void finished(AbstractWidget *from, AbstractWidget *to);
+    void finished(GraphView::Widgets::AbstractWidget *from, GraphView::Widgets::AbstractWidget *to);
 
 private:
     enum class ConnectMode { None, FromHandle, FromLine };
@@ -39,26 +43,27 @@ private:
     Q_ENUM(MoveType)
 
     void nullAllSelectedItems();
-    bool hilightHandleUnderCursor(QGraphicsSceneMouseEvent *mouseEvent, AbstractWidget *&w, ConnectionHandleWidget *&ch);
+    bool hilightHandleUnderCursor(QGraphicsSceneMouseEvent *mouseEvent, Widgets::AbstractWidget *&w, Widgets::ConnectionHandle *&ch);
 
     ConnectMode _connectMode{ConnectMode::None};
-    QList<RelationWidget *> _sceneRelations;
+    QList<Widgets::Relation *> _sceneRelations;
     MoveType _moveType{MoveType::None};
-    RelationWidget *_relationPreview;
-    CrossConnection *_crossConnection{nullptr};
+    Widgets::Relation *_relationPreview;
+    Widgets::CrossConnection *_crossConnection{nullptr};
 
     // common
-    ConnectionHandleWidget *_destination{nullptr};
+    Widgets::ConnectionHandle *_destination{nullptr};
 
     // from widget
-    RelationWidget *_relation{nullptr};
-    AbstractWidget *_connectSourceWidget{nullptr};
-    ConnectionHandleWidget *_source{nullptr};
+    Widgets::Relation *_relation{nullptr};
+    Widgets::AbstractWidget *_connectSourceWidget{nullptr};
+    Widgets::ConnectionHandle *_source{nullptr};
 
     // from relation
-    RelationWidget *_sourceRelation{nullptr};
+    Widgets::Relation *_sourceRelation{nullptr};
     QPointF _sourcePoint;
 
 };
 
+}
 }

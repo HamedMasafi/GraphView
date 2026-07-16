@@ -7,6 +7,8 @@ namespace GraphView
 {
 class Scene;
 class View;
+namespace Tools
+{
 class AbstractTool;
 
 namespace {
@@ -69,5 +71,6 @@ Q_OUTOFLINE_TEMPLATE void AbstractToolsContainer<_Parent>::setTool(_Tool *tool)
         currentTool = tool;
         toolActivated(tool);
     }
+}
 }
 }

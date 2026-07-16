@@ -1,9 +1,9 @@
 #include "firmwaredata.h"
 
-namespace GraphView {
+namespace Data{
 
 FirmwareData::FirmwareData() : AbstractData{AbstractData::Type::Firmware}
 {
 
 }
-} // namespace GraphView
+}

@@ -2,7 +2,7 @@
 
 #include "abstractdata.h"
 
-namespace GraphView
+namespace Data
 {
 
 class FirmwareData : public AbstractData
@@ -12,4 +12,4 @@ public:
     FirmwareData();
 };
 
-} // namespace GraphView
+}

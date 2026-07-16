@@ -2,7 +2,7 @@
 
 // #include <QUndoCommand>
 
-// namespace GraphView {
+// namespace GraphView::Commands{
 
 // class RemoveNodesCommand : public QUndoCommand
 // {

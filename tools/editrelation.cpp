@@ -4,13 +4,13 @@
 
 #include <QGraphicsSceneEvent>
 
-namespace GraphView
+namespace GraphView::Tools
 {
-EditRelationTool::EditRelationTool(Scene *scene) : AbstractTool{scene}
+EditRelation::EditRelation(Scene *scene) : AbstractTool{scene}
 {
 }
 
-bool EditRelationTool::accept(QGraphicsItem *item, QGraphicsSceneMouseEvent *mouseEvent)
+bool EditRelation::accept(QGraphicsItem *item, QGraphicsSceneMouseEvent *mouseEvent)
 {
     Q_UNUSED(item)
     auto relations = _scene->relations();
@@ -23,7 +23,7 @@ bool EditRelationTool::accept(QGraphicsItem *item, QGraphicsSceneMouseEvent *mou
     return false;
 }
 
-void EditRelationTool::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
+void EditRelation::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (mouseEvent->buttons() & Qt::LeftButton) {
         _relation->setActive(true);
@@ -31,13 +31,13 @@ void EditRelationTool::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
     }
 }
 
-void EditRelationTool::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
+void EditRelation::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (mouseEvent->buttons() & Qt::LeftButton)
         _relation->processMouseMoveEvent(_scene->snapPoint(mouseEvent->scenePos()));
 }
 
-void EditRelationTool::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
+void EditRelation::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (mouseEvent->buttons() & Qt::LeftButton)
         _relation->processMouseReleaseEvent(_scene->snapPoint(mouseEvent->scenePos()));

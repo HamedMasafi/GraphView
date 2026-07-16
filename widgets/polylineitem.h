@@ -5,9 +5,12 @@
 
 namespace GraphView {
 
+namespace Handles {
 class PolylineHandle;
+}
 
-class PolylineItemWidget : public AbstractWidget
+namespace Widgets {
+class PolylineItem : public AbstractWidget
 {
     Q_OBJECT
 
@@ -18,8 +21,8 @@ public:
     enum { Type = UserType + 6 };
 
     int type() const override { return Type; }
-    explicit PolylineItemWidget(QGraphicsItem *parent = nullptr);
-    ~PolylineItemWidget();
+    explicit PolylineItem(QGraphicsItem *parent = nullptr);
+    ~PolylineItem();
 
     void addNode(const QPointF &pt);
     void insertNode(SizeType index, const QPointF &pt);
@@ -49,7 +52,7 @@ public:
 
     void setPoly(const QPolygonF &newPoly);
 
-    QList<PolylineHandle *> handles() const;
+    QList<Handles::PolylineHandle *> handles() const;
 
     void setHandlesBackgroundColor(const QColor &color);
     void setHandlesBorderColor(const QColor &color);
@@ -64,7 +67,7 @@ private Q_SLOTS:
 Q_SIGNALS:
     void lineWidthChanged();
     void lineColorChanged();
-    void tooltipText(PolylineHandle *handle, QString *text);
+    void tooltipText(GraphView::Handles::PolylineHandle *handle, QString *text);
 
 private:
     void normalize();
@@ -74,7 +77,7 @@ protected:
     QPolygonF _poly;
     qreal m_lineWidth{2.0};
     QColor m_lineColor{Qt::black};
-    QList<PolylineHandle *> _handles;
+    QList<Handles::PolylineHandle *> _handles;
     QRectF _cachedRect;
     int _maxNodesCount{0};
     int _minNodesCount{0};
@@ -83,4 +86,5 @@ protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 };
 
+} // namespace Widgets
 } // namespace GraphView

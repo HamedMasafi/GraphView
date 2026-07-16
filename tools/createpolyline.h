@@ -2,26 +2,27 @@
 
 #include "abstracttool.h"
 
+namespace GraphView::Widgets {
 class PolylineItem;
-
-namespace GraphView
+}
+namespace GraphView::Tools
 {
 
-class CreatePolylineTool : public AbstractTool
+class CreatePolyline : public AbstractTool
 {
     Q_OBJECT
 
 public:
-    explicit CreatePolylineTool(Scene *scene);
+    explicit CreatePolyline(Scene *scene);
     void mouseReleased(QGraphicsSceneMouseEvent *mouseEvent) override;
     QString text() const override;
     ToolType toolType() const override;
 
-    void setCreator(const std::function<PolylineItem *()> &newCreator);
+    void setCreator(const std::function<Widgets::PolylineItem *()> &newCreator);
 
 private:
-    std::function<PolylineItem *()> _creator;
-    PolylineItem *_item{nullptr};
+    std::function<Widgets::PolylineItem *()> _creator;
+    Widgets::PolylineItem *_item{nullptr};
     QPolygonF _poly;
 };
 

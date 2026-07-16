@@ -2,9 +2,9 @@
 
 #include "abstractrectwidget.h"
 
-namespace GraphView {
+namespace GraphView::Widgets {
 
-class ConnectionHandleWidget;
+class ConnectionHandle;
 class AbstractConnectableWidget : public AbstractRectWidget
 {
     Q_OBJECT
@@ -15,10 +15,10 @@ public:
     void addConnectionNode(Qt::Edge edge);
 
     QMap<Qt::Edge, QGraphicsLinearLayout *> _edgeNodesLayout;
-    QMultiMap<Qt::Edge, ConnectionHandleWidget *> _connectionHandles;
+    QMultiMap<Qt::Edge, ConnectionHandle *> _connectionHandles;
 
 protected:
     void resized();
 };
 
-} // namespace GraphView
+} // namespace GraphView::Widgets

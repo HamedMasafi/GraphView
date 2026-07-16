@@ -10,15 +10,15 @@
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 
-namespace GraphView {
+namespace GraphView::Widgets {
 
-PolylineItemWidget::PolylineItemWidget(QGraphicsItem *parent)
+PolylineItem::PolylineItem(QGraphicsItem *parent)
     : AbstractWidget(parent)
 {
     setFlags(ItemIsSelectable | ItemIsMovable);
 }
 
-PolylineItemWidget::~PolylineItemWidget()
+PolylineItem::~PolylineItem()
 {
     for (auto &handle : _handles) {
         scene()->removeItem(handle);
@@ -26,7 +26,7 @@ PolylineItemWidget::~PolylineItemWidget()
     }
 }
 
-void PolylineItemWidget::addNode(const QPointF &pt)
+void PolylineItem::addNode(const QPointF &pt)
 {
     // QPointF local = mapFromScene(pt);
     qDebug() << Q_FUNC_INFO << _poly.count() << _maxNodesCount;
@@ -40,7 +40,7 @@ void PolylineItemWidget::addNode(const QPointF &pt)
     createHandles();
 }
 
-void PolylineItemWidget::insertNode(SizeType index, const QPointF &pt)
+void PolylineItem::insertNode(SizeType index, const QPointF &pt)
 {
     qDebug() << Q_FUNC_INFO << _poly.count() << _maxNodesCount;
 
@@ -54,7 +54,7 @@ void PolylineItemWidget::insertNode(SizeType index, const QPointF &pt)
     createHandles();
 }
 
-void PolylineItemWidget::removeNode(SizeType index)
+void PolylineItem::removeNode(SizeType index)
 {
     if (index < 0 || index >= _poly.size())
         return;
@@ -69,7 +69,7 @@ void PolylineItemWidget::removeNode(SizeType index)
     createHandles();
 }
 
-void PolylineItemWidget::setNode(SizeType index, const QPointF &pt)
+void PolylineItem::setNode(SizeType index, const QPointF &pt)
 {
     prepareGeometryChange();
     _poly[index] = pt;
@@ -82,12 +82,12 @@ void PolylineItemWidget::setNode(SizeType index, const QPointF &pt)
     update();
 }
 
-QPointF PolylineItemWidget::nodeAt(SizeType index) const
+QPointF PolylineItem::nodeAt(SizeType index) const
 {
     return _poly.value(index);
 }
 
-void PolylineItemWidget::normalize()
+void PolylineItem::normalize()
 {
     if (_poly.isEmpty())
         return;
@@ -119,7 +119,7 @@ void PolylineItemWidget::normalize()
     // qDebug() << "_cachedRect" << _cachedRect;
 }
 
-void PolylineItemWidget::createHandles()
+void PolylineItem::createHandles()
 {
     auto scene = this->scene();
     while (_handles.size() > _poly.size()) {
@@ -129,14 +129,14 @@ void PolylineItemWidget::createHandles()
         delete handle;
     }
     while (_handles.size() < _poly.size()) {
-        auto handle = new PolylineHandle;
+        auto handle = new Handles::PolylineHandle;
         handle->setZValue(Z::handle);
         if (Q_LIKELY(scene))
             scene->addItem(handle);
         _handles << handle;
 
-        // connect(handle, &PolylineHandle::moving, this, &PolylineItemWidget::handleMoving);
-        // connect(handle, &PolylineHandle::moved, this, &PolylineItemWidget::handleMoved);
+        // connect(handle, &PolylineHandle::moving, this, &PolylineItem::handleMoving);
+        // connect(handle, &PolylineHandle::moved, this, &PolylineItem::handleMoved);
     }
     for (auto i = 0; i < _poly.size(); ++i) {
         _handles[i]->setIndex(i);
@@ -149,7 +149,7 @@ void PolylineItemWidget::createHandles()
     }
 }
 
-QVariant PolylineItemWidget::itemChange(GraphicsItemChange change, const QVariant &value)
+QVariant PolylineItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if (change == GraphicsItemChange::ItemSceneHasChanged) {
         auto s = scene();
@@ -160,42 +160,42 @@ QVariant PolylineItemWidget::itemChange(GraphicsItemChange change, const QVarian
     return AbstractWidget::itemChange(change, value);
 }
 
-QList<PolylineHandle *> PolylineItemWidget::handles() const
+QList<Handles::PolylineHandle *> PolylineItem::handles() const
 {
     return _handles;
 }
 
-void PolylineItemWidget::setHandleSize(int size)
+void PolylineItem::setHandleSize(int size)
 {
     for (auto &handle : _handles)
         handle->setSize(size);
 }
 
-void PolylineItemWidget::setHandlesBackgroundColor(const QColor &color)
+void PolylineItem::setHandlesBackgroundColor(const QColor &color)
 {
     for (auto &handle : _handles)
         handle->setBackgroundColor(color);
 }
 
-void PolylineItemWidget::setHandlesBorderColor(const QColor &color)
+void PolylineItem::setHandlesBorderColor(const QColor &color)
 {
     for (auto &handle : _handles)
         handle->setBorderColor(color);
 }
 
-void PolylineItemWidget::setHandlesSelectedBackgroundColor(const QColor &color)
+void PolylineItem::setHandlesSelectedBackgroundColor(const QColor &color)
 {
     for (auto &handle : _handles)
         handle->setSelectedBackgroundColor(color);
 }
 
-void PolylineItemWidget::setHandlesSelectedBorderColor(const QColor &color)
+void PolylineItem::setHandlesSelectedBorderColor(const QColor &color)
 {
     for (auto &handle : _handles)
         handle->setSelectedBorderColor(color);
 }
 
-void PolylineItemWidget::setPoly(const QPolygonF &newPoly)
+void PolylineItem::setPoly(const QPolygonF &newPoly)
 {
     _poly = newPoly;
     normalize();
@@ -203,9 +203,9 @@ void PolylineItemWidget::setPoly(const QPolygonF &newPoly)
     update();
 }
 
-void PolylineItemWidget::handleMoving(QPointF *pt)
+void PolylineItem::handleMoving(QPointF *pt)
 {
-    auto handle = qobject_cast<PolylineHandle *>(sender());
+    auto handle = qobject_cast<Handles::PolylineHandle *>(sender());
     if (!handle)
         return;
 
@@ -214,53 +214,53 @@ void PolylineItemWidget::handleMoving(QPointF *pt)
     update();
 }
 
-void PolylineItemWidget::handleMoved(QPointF from, QPointF to)
+void PolylineItem::handleMoved(QPointF from, QPointF to)
 {
-    auto handle = qobject_cast<PolylineHandle *>(sender());
+    auto handle = qobject_cast<Handles::PolylineHandle *>(sender());
     if (!handle)
         return;
-    auto cmd = new MoveHandleCommand{this, handle->index(), from, to};
+    auto cmd = new Commands::MoveHandleCommand{this, handle->index(), from, to};
     dynamic_cast<Scene *>(scene())->undoStack()->push(cmd);
 }
 
-int PolylineItemWidget::minNodesCount() const
+int PolylineItem::minNodesCount() const
 {
     return _minNodesCount;
 }
 
-void PolylineItemWidget::setMinNodesCount(int newMinNodesCount)
+void PolylineItem::setMinNodesCount(int newMinNodesCount)
 {
     _minNodesCount = newMinNodesCount;
 }
 
-QPolygonF PolylineItemWidget::poly() const
+QPolygonF PolylineItem::poly() const
 {
     return _poly;
 }
 
-SizeType PolylineItemWidget::count() const
+SizeType PolylineItem::count() const
 {
     return _poly.size();
 }
 
-int PolylineItemWidget::maxNodesCount() const
+int PolylineItem::maxNodesCount() const
 {
     return _maxNodesCount;
 }
 
-void PolylineItemWidget::setMaxNodesCount(int newMaxNodesCount)
+void PolylineItem::setMaxNodesCount(int newMaxNodesCount)
 {
     _maxNodesCount = newMaxNodesCount;
 }
 
-QRectF PolylineItemWidget::boundingRect() const
+QRectF PolylineItem::boundingRect() const
 {
     const qreal pad = m_lineWidth * 0.5 + 2.0;
     QRectF rc{QPointF{0, 0}, _cachedRect.size()};
     return rc.adjusted(-pad, -pad, pad, pad);
 }
 
-// QPainterPath PolylineItemWidget::shape() const
+// QPainterPath PolylineItem::shape() const
 // {
 //     QPainterPath path;
 //     if (_poly.size() < 2)
@@ -273,7 +273,7 @@ QRectF PolylineItemWidget::boundingRect() const
 //     return stroker.createStroke(path);
 // }
 
-void PolylineItemWidget::paint(QPainter *p, const QStyleOptionGraphicsItem *opt, QWidget *)
+void PolylineItem::paint(QPainter *p, const QStyleOptionGraphicsItem *opt, QWidget *)
 {
     Q_UNUSED(opt)
     if (_poly.size() < 2)
@@ -293,12 +293,12 @@ void PolylineItemWidget::paint(QPainter *p, const QStyleOptionGraphicsItem *opt,
     p->restore();
 }
 
-qreal PolylineItemWidget::lineWidth() const
+qreal PolylineItem::lineWidth() const
 {
     return m_lineWidth;
 }
 
-void PolylineItemWidget::setLineWidth(qreal newLineWidth)
+void PolylineItem::setLineWidth(qreal newLineWidth)
 {
     if (qFuzzyCompare(m_lineWidth, newLineWidth))
         return;
@@ -307,12 +307,12 @@ void PolylineItemWidget::setLineWidth(qreal newLineWidth)
     emit lineWidthChanged();
 }
 
-QColor PolylineItemWidget::lineColor() const
+QColor PolylineItem::lineColor() const
 {
     return m_lineColor;
 }
 
-void PolylineItemWidget::setLineColor(const QColor &newLineColor)
+void PolylineItem::setLineColor(const QColor &newLineColor)
 {
     if (m_lineColor == newLineColor)
         return;
@@ -321,4 +321,4 @@ void PolylineItemWidget::setLineColor(const QColor &newLineColor)
     emit lineColorChanged();
 }
 
-} // namespace GraphView
+} // namespace GraphView::Widgets

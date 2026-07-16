@@ -3,14 +3,14 @@
 #include "abstracttool.h"
 
 class QGraphicsRectItem;
-namespace GraphView
+namespace GraphView::Tools
 {
-class CreateWidgetTool : public AbstractTool
+class CreateWidget : public AbstractTool
 {
     Q_OBJECT
 
 public:
-    CreateWidgetTool(Scene *scene);
+    CreateWidget(Scene *scene);
 
     void mousePressed(QGraphicsSceneMouseEvent *mouseEvent) override;
     void mouseMoved(QGraphicsSceneMouseEvent *mouseEvent) override;
@@ -25,4 +25,5 @@ private:
     QGraphicsRectItem *_dragRect;
 
 };
+
 }

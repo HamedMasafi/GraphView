@@ -6,21 +6,28 @@ namespace GraphView
 {
 class Scene;
 class View;
-class AbstractWidget;
-class RelationWidget;
 
-class ItemRemoverTool : public AbstractTool
+namespace Widgets
+{
+class AbstractWidget;
+class Relation;
+}
+
+namespace Tools
+{
+class ItemRemover : public AbstractTool
 {
 public:
-    explicit ItemRemoverTool(Scene *scene);
+    explicit ItemRemover(Scene *scene);
 
     // void mousePressed(QGraphicsSceneMouseEvent *mouseEvent) override;
     void keyPressEvent(QKeyEvent *event) override;
     ToolType toolType() const override;
 
 private:
-    // AbstractWidget *_widget{nullptr};
-    // RelationWidget *_relation{nullptr};
+    // Widgets::AbstractWidget *_widget{nullptr};
+    // Widgets::Relation *_relation{nullptr};
 };
 
+}
 }

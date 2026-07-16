@@ -20,7 +20,45 @@
 
 #include <widgets/abstractrectwidget.h>
 
-namespace GraphView {
+namespace GraphView::Tools {
+
+// namespace SelectToolImpl {
+
+// class ResizeHandle : public QGraphicsEllipseItem
+// {
+// public:
+//     ResizeHandle(qreal size = 15)
+//         : QGraphicsEllipseItem{-size / 2, -size / 2, size, size}
+//     {
+//         setFlag(QGraphicsItem::ItemIgnoresTransformations);
+//         setPen(QPen{Qt::darkGray});
+//         setBrush(Qt::green);
+//     }
+
+//     Widgets::ResizeDirection resizeDirection() const { return m_resizeDirection; }
+//     void setResizeDirection(Widgets::ResizeDirection newResizeDirection)
+//     {
+//         m_resizeDirection = newResizeDirection;
+//     }
+
+//     int index() const;
+//     void setIndex(int newIndex);
+
+// private:
+//     Widgets::ResizeDirection m_resizeDirection;
+//     int _index;
+// };
+
+// int ResizeHandle::index() const
+// {
+//     return _index;
+// }
+
+// void ResizeHandle::setIndex(int newIndex)
+// {
+//     _index = newIndex;
+// }
+// } // namespace SelectToolImpl
 
 SelectTool::SelectTool(Scene *scene)
     : AbstractTool{scene}
@@ -67,7 +105,7 @@ void SelectTool::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
         return;
     }
 
-    auto resizeHandle = dynamic_cast<ResizeHandle *>(item);
+    auto resizeHandle = dynamic_cast<Handles::ResizeHandle *>(item);
     if (resizeHandle) {
         _selectedHandle = resizeHandle;
         _itemClickPos = _selectedHandle->pos();
@@ -83,7 +121,7 @@ void SelectTool::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
         return;
     }
 
-    auto rect = dynamic_cast<AbstractRectWidget *>(item);
+    auto rect = dynamic_cast<Widgets::AbstractRectWidget *>(item);
     if (rect && rect->flags() & QGraphicsItem::ItemIsSelectable) {
         if (rect->isSelected()) {
             _clickPos = mouseEvent->scenePos();
@@ -117,7 +155,7 @@ void SelectTool::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
     if (mouseEvent->buttons() & Qt::LeftButton) {
         switch (_mode) {
         case Mode::ResizeWidget:
-            handleMoving(dynamic_cast<ResizeHandle *>(_selectedHandle),
+            handleMoving(dynamic_cast<Handles::ResizeHandle *>(_selectedHandle),
                          mouseEvent->scenePos());
 
             setSelectedWidgetsGeometry(QStringLiteral("x:%1 y:%2 width:%3 height:%4")
@@ -177,7 +215,7 @@ void SelectTool::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
                 i.key()->setPos(_scene->snapPoint(mouseEvent->scenePos() - _clickPos + i.value()));
             // _selectedWidget->setPos(
             //     _scene->snapPoint(mouseEvent->scenePos() - _clickPos + _objectInitialPos));
-            // MoveEvent e{_selectedWidget->pos(), oldPos};
+            // Core::MoveEvent e{_selectedWidget->pos(), oldPos};
             // Q_EMIT _selectedWidget->moving(&e);
             // setHandlesOnItem(_selectedWidget->childRect());
             break;
@@ -203,7 +241,7 @@ void SelectTool::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
     Q_EMIT moved();
     // auto item = _scene->itemAt(mouseEvent->scenePos(), QTransform());
     // if (item && !_selectedHandle) {
-    //     _selectedWidget = dynamic_cast<AbstractWidget *>(item);
+    //     _selectedWidget = dynamic_cast<Widgets::AbstractWidget *>(item);
     //     qDebug() << "_selectedWidget" << _selectedWidget;
     //     setSelectedWidget(_selectedWidget);
     // }
@@ -211,7 +249,7 @@ void SelectTool::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
     // if (mouseEvent->buttons() & Qt::LeftButton) {
     switch (_mode) {
     case Mode::ResizeWidget: {
-        auto cmd = new ChangeWidgetsGeometryCommand{_scene};
+        auto cmd = new Commands::ChangeWidgetsGeometry{_scene};
         _scene->pushCommand(cmd);
         cmd->addWidget(_selectedWidget, _initialRect, _selectedWidget->childRect());
         break;
@@ -236,7 +274,7 @@ void SelectTool::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
         // _selectedWidget->ungrabMouse();
 
         if (_wasMoved) {
-            auto cmd = new ChangeWidgetsGeometryCommand{_scene};
+            auto cmd = new Commands::ChangeWidgetsGeometry{_scene};
             _scene->pushCommand(cmd);
             _scene->setIsModified(true);
             cmd->addWidget(_selectedWidget,
@@ -248,7 +286,7 @@ void SelectTool::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
 
     case Mode::MoveWidgets: {
         if (_wasMoved) {
-            auto cmd = new MoveWidgetsCommand{_scene};
+            auto cmd = new Commands::MoveWidgets{_scene};
             _scene->pushCommand(cmd);
             _scene->setIsModified(true);
             for (auto i = _initialPositions.begin(); i != _initialPositions.end(); ++i) {
@@ -277,7 +315,7 @@ void SelectTool::mouseDoubleClicked(QGraphicsSceneMouseEvent *mouseEvent)
         return;
     }
 
-    auto w = dynamic_cast<AbstractWidget *>(item);
+    auto w = dynamic_cast<Widgets::AbstractWidget *>(item);
     if (w && w->flags() & QGraphicsItem::ItemIsSelectable) {
         Q_EMIT _scene->widgetDoubleClicked(w);
     }
@@ -295,7 +333,7 @@ void SelectTool::keyReleaseEvent(QKeyEvent *event)
 
 void SelectTool::handleMoving(QPointF point)
 {
-    auto s = dynamic_cast<ResizeHandle *>(sender());
+    auto s = dynamic_cast<Handles::ResizeHandle *>(sender());
     QRectF rc = resizeRect;
 
     auto pt = _scene->snapPoint(point);
@@ -303,13 +341,13 @@ void SelectTool::handleMoving(QPointF point)
     QSizeF minimumSize;     //  = ...
     QSizeF maximumSize;     //  = ...
     QPair<int, int> ration; // = ...
-    if (s->resizeDirection() & Top)
+    if (s->resizeDirection() & Widgets::Top)
         rc.setTop(pt.y());
-    if (s->resizeDirection() & Left)
+    if (s->resizeDirection() & Widgets::Left)
         rc.setLeft(pt.x());
-    if (s->resizeDirection() & Right)
+    if (s->resizeDirection() & Widgets::Right)
         rc.setRight(pt.x());
-    if (s->resizeDirection() & Bottom)
+    if (s->resizeDirection() & Widgets::Bottom)
         rc.setBottom(pt.y());
 
     if (rc.isValid()) {
@@ -328,7 +366,7 @@ void SelectTool::handleMoved()
     Q_EMIT resized();
 }
 
-void SelectTool::handleMoving(ResizeHandle *handle, QPointF point)
+void SelectTool::handleMoving(Handles::ResizeHandle *handle, QPointF point)
 {
     QRectF rc = resizeRect;
 
@@ -341,13 +379,13 @@ void SelectTool::handleMoving(ResizeHandle *handle, QPointF point)
     if (ratio.first && ratio.second) {
     }
 
-    if (handle->resizeDirection() & Top)
+    if (handle->resizeDirection() & Widgets::Top)
         rc.setTop(pt.y());
-    if (handle->resizeDirection() & Left)
+    if (handle->resizeDirection() & Widgets::Left)
         rc.setLeft(pt.x());
-    if (handle->resizeDirection() & Right)
+    if (handle->resizeDirection() & Widgets::Right)
         rc.setRight(pt.x());
-    if (handle->resizeDirection() & Bottom)
+    if (handle->resizeDirection() & Widgets::Bottom)
         rc.setBottom(pt.y());
 
     if (rc.width() < 0)
@@ -383,13 +421,13 @@ void SelectTool::handleMoving(ResizeHandle *handle, QPointF point)
         // بازمرکز کردن
     }
 
-    if (handle->resizeDirection() & Top)
+    if (handle->resizeDirection() & Widgets::Top)
         rc.moveBottom(resizeRect.bottom());
-    if (handle->resizeDirection() & Left)
+    if (handle->resizeDirection() & Widgets::Left)
         rc.moveRight(resizeRect.right());
-    if (handle->resizeDirection() & Right)
+    if (handle->resizeDirection() & Widgets::Right)
         rc.moveLeft(resizeRect.left());
-    if (handle->resizeDirection() & Bottom)
+    if (handle->resizeDirection() & Widgets::Bottom)
         rc.moveTop(resizeRect.top());
 
     if (rc.isValid()) {
@@ -414,7 +452,7 @@ void SelectTool::moveSelectedWidgets(Qt::Key key, qreal distance)
 {
     auto widgets = _scene->selectedWidgets();
 
-    for (AbstractWidget *w : std::as_const(widgets)) {
+    for (Widgets::AbstractWidget *w : std::as_const(widgets)) {
         switch (key) {
         case Qt::Key_Left:
             w->setPos(w->pos().x() - distance, w->pos().y());
@@ -469,14 +507,14 @@ void SelectTool::setHandlesOnItem(const QPolygonF &poly)
         delete h;
     }
     while (polyResizeHandles.size() < poly.size()) {
-        auto h = new PolylineHandle;
+        auto h = new Handles::PolylineHandle;
         h->setBackgroundColor(Qt::green);
         _scene->addItem(h);
         h->setZValue(999999);
         h->setFlag(QGraphicsItem::ItemIsMovable);
 
-        // connect(h, &ResizeHandle::moving, this, &SelectTool::handleMoving);
-        // connect(h, &ResizeHandle::moved, this, &SelectTool::moved);
+        // connect(h, &Widgets::ResizeHandle::moving, this, &SelectTool::handleMoving);
+        // connect(h, &Widgets::ResizeHandle::moved, this, &SelectTool::moved);
         polyResizeHandles << h;
     }
 
@@ -486,23 +524,23 @@ void SelectTool::setHandlesOnItem(const QPolygonF &poly)
     }
 }
 
-void SelectTool::setResezeHandlePos(ResizeHandle *handle, QPointF pos)
+void SelectTool::setResezeHandlePos(Handles::ResizeHandle *handle, QPointF pos)
 {
     handle->setPos(pos.x(), pos.y());
 }
 
-void SelectTool::setResezeHandlePos(ResizeHandle *handle, QPointF pos1, QPointF pos2)
+void SelectTool::setResezeHandlePos(Handles::ResizeHandle *handle, QPointF pos1, QPointF pos2)
 {
     handle->setPos((pos2.x() + pos1.x()) / 2, (pos2.y() + pos1.y()) / 2);
 }
 
-void SelectTool::setSelectedWidget(AbstractWidget *newSelectedWidget)
+void SelectTool::setSelectedWidget(Widgets::AbstractWidget *newSelectedWidget)
 {
     _selectedWidget = newSelectedWidget;
 
     if (_selectedWidget) {
         _initialRect = _selectedWidget->childRect();
-        auto poly = dynamic_cast<PolylineItem *>(newSelectedWidget);
+        auto poly = dynamic_cast<Widgets::PolylineItem *>(newSelectedWidget);
 
         if (poly) {
             _selectedItemType = SelectedItemType::Polygon;
@@ -512,13 +550,13 @@ void SelectTool::setSelectedWidget(AbstractWidget *newSelectedWidget)
             _selectedItemType = SelectedItemType::Rect;
             setHandlesOnItem(_selectedWidget->childRect());
 
-            if (_selectedWidget->resizeMode() == WidgetResizeMode::Horizontal) {
+            if (_selectedWidget->resizeMode() == GraphView::WidgetResizeMode::Horizontal) {
                 resizerR->setVisible(true);
                 resizerL->setVisible(true);
-            } else if (_selectedWidget->resizeMode() == WidgetResizeMode::Vertical) {
+            } else if (_selectedWidget->resizeMode() == GraphView::WidgetResizeMode::Vertical) {
                 resizerT->setVisible(true);
                 resizerB->setVisible(true);
-            } else if (_selectedWidget->resizeMode() == WidgetResizeMode::None) {
+            } else if (_selectedWidget->resizeMode() == GraphView::WidgetResizeMode::None) {
                 setVisible(false);
             } else {
                 setVisible(true);
@@ -554,14 +592,14 @@ void SelectTool::setVisible(bool visible)
 
 void SelectTool::initHandles()
 {
-    resizerTL = new ResizeHandle;
-    resizerT = new ResizeHandle;
-    resizerTR = new ResizeHandle;
-    resizerL = new ResizeHandle;
-    resizerR = new ResizeHandle;
-    resizerBL = new ResizeHandle;
-    resizerB = new ResizeHandle;
-    resizerBR = new ResizeHandle;
+    resizerTL = new Handles::ResizeHandle;
+    resizerT = new Handles::ResizeHandle;
+    resizerTR = new Handles::ResizeHandle;
+    resizerL = new Handles::ResizeHandle;
+    resizerR = new Handles::ResizeHandle;
+    resizerBL = new Handles::ResizeHandle;
+    resizerB = new Handles::ResizeHandle;
+    resizerBR = new Handles::ResizeHandle;
 
     rectResizeHandles.append(resizerTL);
     rectResizeHandles.append(resizerT);
@@ -581,23 +619,23 @@ void SelectTool::initHandles()
     resizerB->setCursor(Qt::SizeVerCursor);
     resizerBR->setCursor(Qt::SizeFDiagCursor);
 
-    resizerT->setResizeDirection(Top);
-    resizerL->setResizeDirection(Left);
-    resizerR->setResizeDirection(Right);
-    resizerB->setResizeDirection(Bottom);
+    resizerT->setResizeDirection(Widgets::Top);
+    resizerL->setResizeDirection(Widgets::Left);
+    resizerR->setResizeDirection(Widgets::Right);
+    resizerB->setResizeDirection(Widgets::Bottom);
 
-    resizerTR->setResizeDirection(Top | Right);
-    resizerTL->setResizeDirection(Top | Left);
-    resizerBR->setResizeDirection(Bottom | Right);
-    resizerBL->setResizeDirection(Bottom | Left);
+    resizerTR->setResizeDirection(Widgets::Top | Widgets::Right);
+    resizerTL->setResizeDirection(Widgets::Top | Widgets::Left);
+    resizerBR->setResizeDirection(Widgets::Bottom | Widgets::Right);
+    resizerBL->setResizeDirection(Widgets::Bottom | Widgets::Left);
 
     for (auto &handle : rectResizeHandles) {
         handle->setBackgroundColor(Qt::green);
         _scene->addItem(handle);
         handle->setZValue(999999);
         // handle->setFlag(QGraphicsItem::ItemIsMovable);
-        // connect(handle, &ResizeHandle::moving, this, &SelectTool::handleMoving);
-        // connect(handle, &ResizeHandle::moved, this, &SelectTool::moved);
+        // connect(handle, &Widgets::ResizeHandle::moving, this, &SelectTool::handleMoving);
+        // connect(handle, &Widgets::ResizeHandle::moved, this, &SelectTool::moved);
         // handle->installEventFilter(this);
         handle->hide();
     } // for
@@ -649,4 +687,4 @@ void SelectTool::setSelectedWidgetsGeometry(const QString &newSelectedWidgetsGeo
     emit selectedWidgetsGeometryChanged(m_selectedWidgetsGeometry);
 }
 
-} // namespace GraphView
+} // namespace GraphView::Tools

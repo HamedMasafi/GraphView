@@ -2,9 +2,9 @@
 #include "widgets/polylineitem.h"
 #include <assert.h>
 
-namespace GraphView {
+namespace GraphView::Commands {
 
-MoveHandleCommand::MoveHandleCommand(PolylineItem *poly,
+MoveHandleCommand::MoveHandleCommand(Widgets::PolylineItem *poly,
                                      SizeType index,
                                      QPointF oldPos,
                                      QPointF newPos)
@@ -26,4 +26,4 @@ void MoveHandleCommand::redo()
     _poly->setNode(_index, _newPos);
 }
 
-}
+} // namespace GraphView::Commands

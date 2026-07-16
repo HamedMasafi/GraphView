@@ -6,14 +6,20 @@ class QGraphicsRectItem;
 namespace GraphView
 {
 
+namespace Handles
+{
 class AbstractHandle;
 class PolylineHandle;
+}
+
+namespace Tools
+{
 
 class NodesTool : public AbstractTool
 {
     Q_OBJECT
 public:
-    NodesTool(Scene *scene);
+    NodesTool(GraphView::Scene *scene);
 
     void mousePressed(QGraphicsSceneMouseEvent *mouseEvent) override;
     void mouseMoved(QGraphicsSceneMouseEvent *mouseEvent) override;
@@ -34,8 +40,9 @@ private:
     QGraphicsRectItem *_selectArea;
     QPointF _clickPos;
     QPointF _startPos;
-    QList<AbstractHandle *> _handles;
-    PolylineHandle *_selectedHandle{nullptr};
+    QList<Handles::AbstractHandle *> _handles;
+    Handles::PolylineHandle *_selectedHandle{nullptr};
 };
 
+}
 }

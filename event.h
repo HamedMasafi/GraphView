@@ -4,7 +4,7 @@
 #include <QPointF>
 #include <QEvent>
 
-namespace GraphView
+namespace GraphView::Core
 {
 class ResizeEvent : public QEvent
 {

@@ -7,13 +7,17 @@
 #include <QPen>
 namespace GraphView
 {
-
+namespace Core
+{
 class MoveEvent;
-class ConnectionHandleWidget;
+}
+namespace Widgets
+{
+class ConnectionHandle;
 class AbstractWidget;
-class ArrowHeadWidget;
+class ArrowHead;
 
-class RelationWidget : public QObject, public QGraphicsItem
+class Relation : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 
@@ -24,19 +28,19 @@ public:
     {
         return Type;
     }
-    class PointHolder : public AbstractSerializable
+    class PointHolder : public Core::AbstractSerializable
     {
     public:
         PointHolder(const QPointF &pt);
-        PointHolder(ConnectionHandleWidget *handle);
+        PointHolder(ConnectionHandle *handle);
         PointHolder operator=(const QPointF &pt);
-        PointHolder operator=(ConnectionHandleWidget *handle);
+        PointHolder operator=(ConnectionHandle *handle);
         bool operator==(const QPointF &pt);
-        bool operator==(ConnectionHandleWidget *handle);
+        bool operator==(ConnectionHandle *handle);
         bool operator==(const PointHolder &other);
 
         QPointF point() const;
-        ConnectionHandleWidget *handle() const;
+        ConnectionHandle *handle() const;
 
         operator QPointF();
         operator const QPointF() const;
@@ -46,11 +50,11 @@ public:
 
     private:
         QPointF _pt;
-        ConnectionHandleWidget *_handle;
+        ConnectionHandle *_handle;
     };
 
-    RelationWidget(QGraphicsItem *parent = nullptr);
-    RelationWidget(ConnectionHandleWidget *from, ConnectionHandleWidget *to);
+    Relation(QGraphicsItem *parent = nullptr);
+    Relation(ConnectionHandle *from, ConnectionHandle *to);
 
     PointHolder &from();
     void setFrom(const PointHolder &newFrom);
@@ -78,7 +82,7 @@ public:
     void reset();
 
 private Q_SLOTS:
-    void widget_moving(MoveEvent *);
+    void widget_moving(GraphView::Core::MoveEvent *);
 
 private:
     void calculateArrow();
@@ -95,13 +99,14 @@ private:
     QPen _pen{QPen(Qt::gray, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin)};
     QPen _activePen{QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin)};
 
-    //    ArrowHeadWidget *_arrow;
+    //    ArrowHead *_arrow;
     bool _isActive{false};
     QList<QGraphicsLineItem *> _lines;
 
-    friend class ConnectWidgetsTool;
+    friend class ConnectWidgets;
 };
 
 }
+}
 
-QDebug operator<<(QDebug d, const GraphView::RelationWidget::PointHolder &p);
+QDebug operator<<(QDebug d, const GraphView::Widgets::Relation::PointHolder &p);

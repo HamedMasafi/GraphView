@@ -6,12 +6,15 @@
 
 namespace GraphView
 {
+namespace Widgets{
 
-class ResizeHandlesProviderTool:public AbstractTool
+}
+namespace Tools{
+class ResizeHandlesProvider:public AbstractTool
 {
     Q_OBJECT
 public:
-    ResizeHandlesProviderTool(Scene *scene);
+    ResizeHandlesProvider(Scene *scene);
     bool accept(QGraphicsItem *item, QGraphicsSceneMouseEvent *mouseEvent) override;
 
 private:
@@ -19,3 +22,6 @@ private:
 };
 
 }
+
+}
+

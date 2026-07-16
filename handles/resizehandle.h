@@ -4,7 +4,7 @@
 #include "../itemresizer.h"
 #include "abstracthandle.h"
 
-namespace GraphView
+namespace GraphView::Handles
 {
 
 class ResizeHandle : public AbstractHandle
@@ -12,16 +12,16 @@ class ResizeHandle : public AbstractHandle
 public:
     ResizeHandle();
 
-    ResizeDirection resizeDirection() const{
+    Widgets::ResizeDirection resizeDirection() const{
         return m_resizeDirection;
     }
-    void setResizeDirection(ResizeDirection newResizeDirection)
+    void setResizeDirection(Widgets::ResizeDirection newResizeDirection)
     {
         m_resizeDirection = newResizeDirection;
     }
 
 private:
-    ResizeDirection m_resizeDirection;
+    Widgets::ResizeDirection m_resizeDirection;
 };
 
 }

@@ -12,7 +12,7 @@
 #include <QGraphicsSceneEvent>
 #include <QKeyEvent>
 
-namespace GraphView
+namespace GraphView::Tools
 {
 
 namespace
@@ -70,8 +70,8 @@ int nearestPointToPolygon(const QPolygonF &poly, const QPointF &pt, qreal *dista
 
 }
 
-NodesTool::NodesTool(Scene *scene)
-    : AbstractTool{scene}
+NodesTool::NodesTool(GraphView::Scene *scene)
+    : GraphView::Tools::AbstractTool{scene}
 {
     _selectArea = scene->addRect({});
     _selectArea->setPen(QPen{Qt::darkBlue});
@@ -84,7 +84,7 @@ void NodesTool::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
 {
     if (mouseEvent->buttons() & Qt::LeftButton) {
         auto item = scene()->itemAt(mouseEvent->scenePos(), QTransform{});
-        _selectedHandle = dynamic_cast<PolylineHandle *>(item);
+        _selectedHandle = dynamic_cast<Handles::PolylineHandle *>(item);
 
         if (_selectedHandle) {
             _mouseMode = MouseMode::MoveHandle;
@@ -95,7 +95,7 @@ void NodesTool::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
             _scene->clearSelection();
             _selectArea->setRect(mouseEvent->pos().x(), mouseEvent->pos().y(), 0, 0);
             _selectArea->show();
-            // _handles = _scene->findChildren<AbstractHandle *>();
+            // _handles = _scene->findChildren<Widgets::AbstractHandle *>();
             // mouseEvent->setAccepted(false);
         }
         _clickPos = mouseEvent->scenePos();
@@ -131,10 +131,10 @@ void NodesTool::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
         switch (_mouseMode) {
         case MouseMode::None:
         case MouseMode::MoveHandle:{
-            auto cmd = new MoveHandleCommand{_selectedHandle->poly(),
-                                                                   _selectedHandle->index(),
-                                                                   _startPos,
-                                                                   mouseEvent->scenePos()};
+            auto cmd = new GraphView::Commands::MoveHandleCommand{_selectedHandle->poly(),
+                                                                  _selectedHandle->index(),
+                                                                  _startPos,
+                                                                  mouseEvent->scenePos()};
             _scene->undoStack()->push(cmd);
             break;
         }
@@ -145,7 +145,7 @@ void NodesTool::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
     _selectArea->hide();
     if (mouseEvent->button() == Qt::RightButton) {
         if (_selectedHandle) {
-            auto cmd = new RemoveNodesCommand;
+            auto cmd = new Commands::RemoveNodesCommand;
             cmd->addHandle(_selectedHandle);
             _scene->undoStack()->push(cmd);
         }
@@ -165,21 +165,21 @@ void NodesTool::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
 
 void NodesTool::mouseDoubleClicked(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    QList<PolylineItem *> polyItems;
+    QList<Widgets::PolylineItem *> polyItems;
     auto allItems = _scene->items();
     for (auto &item : allItems) {
-        auto poly = dynamic_cast<PolylineItem *>(item);
+        auto poly = dynamic_cast<Widgets::PolylineItem *>(item);
         if (poly)
             polyItems << poly;
     }
 
     auto item = scene()->itemAt(mouseEvent->scenePos(), QTransform{});
-    _selectedHandle = dynamic_cast<PolylineHandle *>(item);
+    _selectedHandle = dynamic_cast<Handles::PolylineHandle *>(item);
     if (_selectedHandle)
         return;
     int bestIndex{-1};
     qreal bestDistance{std::numeric_limits<qreal>::max()};
-    PolylineItem *selectedPoly{nullptr};
+    Widgets::PolylineItem *selectedPoly{nullptr};
 
     qDebug() << "polyItems.size=" << polyItems.size();
     if (polyItems.size()) {
@@ -200,7 +200,7 @@ void NodesTool::mouseDoubleClicked(QGraphicsSceneMouseEvent *mouseEvent)
 
     if (selectedPoly) {
         // if (selectedPoly->poly())
-        auto cmd = new AddNodesCommand{selectedPoly, mouseEvent->scenePos(), bestIndex};
+        auto cmd = new Commands::AddNodesCommand{selectedPoly, mouseEvent->scenePos(), bestIndex};
         _scene->undoStack()->push(cmd);
     } else {
         qDebug() << "selected poly is null";
@@ -210,17 +210,17 @@ void NodesTool::mouseDoubleClicked(QGraphicsSceneMouseEvent *mouseEvent)
 void NodesTool::keyReleaseEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Delete) {
-        // QMultiMap<PolylineItem *, PolylineHandle *> polyHandles;
+        // QMultiMap<Widgets::PolylineItem *, Widgets::PolylineHandle *> polyHandles;
 
-        QList<PolylineHandle *> polyHandles;
+        QList<Handles::PolylineHandle *> polyHandles;
         // qDebug() << "delete pressed on nodes tool";
         auto selectedItems = _scene->selectedItems();
         for (auto &item : selectedItems) {
-            auto handle = dynamic_cast<AbstractHandle *>(item);
+            auto handle = dynamic_cast<Handles::AbstractHandle *>(item);
             if (!handle)
                 continue;
 
-            auto polyHandle = qobject_cast<PolylineHandle *>(handle);
+            auto polyHandle = qobject_cast<Handles::PolylineHandle *>(handle);
 
             if (polyHandle) {
                 polyHandles << polyHandle;
@@ -228,7 +228,7 @@ void NodesTool::keyReleaseEvent(QKeyEvent *event)
         }
 
         if (polyHandles.size()) {
-            auto cmd = new RemoveNodesCommand;
+            auto cmd = new Commands::RemoveNodesCommand;
             for (auto &ph : polyHandles)
                 cmd->addHandle(ph);
             _scene->undoStack()->push(cmd);
@@ -238,7 +238,7 @@ void NodesTool::keyReleaseEvent(QKeyEvent *event)
     }
 }
 
-AbstractTool::ToolType NodesTool::toolType() const
+GraphView::Tools::AbstractTool::ToolType NodesTool::toolType() const
 {
     return ToolType::RequireActivation;
 }

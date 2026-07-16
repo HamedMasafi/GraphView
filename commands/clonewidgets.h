@@ -5,12 +5,16 @@
 
 namespace GraphView {
 class Scene;
+namespace Widgets {
 class AbstractWidget;
+}
 
-class CloneWidgetsCommand : public QUndoCommand
+namespace Commands {
+
+class CloneWidgets : public QUndoCommand
 {
 public:
-    CloneWidgetsCommand(Scene *scene);
+    CloneWidgets(Scene *scene);
 
     void redo() override;
     void undo() override;
@@ -18,7 +22,8 @@ public:
 private:
     Scene *_scene{};
     QJsonArray _data;
-    QList<AbstractWidget*>_createdWidgets;
+    QList<Widgets::AbstractWidget*>_createdWidgets;
 };
 
+} // namespace Commands
 } // namespace GraphView

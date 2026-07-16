@@ -5,10 +5,9 @@
 #include "widgets/crossconnection.h"
 #include "widgets/relation.h"
 
-namespace GraphView
+namespace GraphView::Commands
 {
-
-SplitRelationCommand::SplitRelationCommand(Scene *scene, RelationWidget *from, ConnectionHandle *to, const QPointF &intersectPoint)
+SplitRelation::SplitRelation(Scene *scene, Widgets::Relation *from, Widgets::ConnectionHandle *to, const QPointF &intersectPoint)
     : QUndoCommand{"Create relation"}
     , _scene{scene}
     , _from{from}
@@ -17,7 +16,7 @@ SplitRelationCommand::SplitRelationCommand(Scene *scene, RelationWidget *from, C
 {
 }
 
-void SplitRelationCommand::undo()
+void SplitRelation::undo()
 {
     _scene->removeItem(_cross);
     _scene->removeRelation(_secondPartRelation);
@@ -26,7 +25,7 @@ void SplitRelationCommand::undo()
     _from->setTo(_originalTo);
 }
 
-void SplitRelationCommand::redo()
+void SplitRelation::redo()
 {
     if (!_cross)
         createNeededItems();
@@ -39,13 +38,13 @@ void SplitRelationCommand::redo()
     _scene->addRelation(_newRelation);
 }
 
-void SplitRelationCommand::createNeededItems()
+void SplitRelation::createNeededItems()
 {
     _originalPoly = _from->poly();
 
     bool found{false};
     for (int i = 0; i < _originalPoly.size() - 1; ++i) {
-        if (!found && isInOneLine(_originalPoly.at(i), _intersectPoint, _originalPoly.at(i + 1))) {
+        if (!found && GraphView::Core::isInOneLine(_originalPoly.at(i), _intersectPoint, _originalPoly.at(i + 1))) {
             _poly1.append(_originalPoly.at(i));
             _poly2.append(_originalPoly.at(i));
             found = true;
@@ -58,13 +57,13 @@ void SplitRelationCommand::createNeededItems()
     }
     _poly2.append(_originalPoly.last());
 
-    _cross = new CrossConnection;
+    _cross = new Widgets::CrossConnection;
     _cross->setCenterPos(_intersectPoint);
 
-    _secondPartRelation = new RelationWidget{_cross, _from->to().handle()};
+    _secondPartRelation = new Widgets::Relation{_cross, _from->to().handle()};
     _secondPartRelation->setPoly(_poly2);
 
-    _newRelation = new RelationWidget{_cross, _to};
+    _newRelation = new Widgets::Relation{_cross, _to};
     _originalTo = _from->to().handle();
 }
 

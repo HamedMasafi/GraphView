@@ -6,7 +6,7 @@
 
 #include <QAction>
 
-namespace GraphView
+namespace GraphView::Tools
 {
 AbstractTool::AbstractTool(Scene *scene)
     : QObject{scene}

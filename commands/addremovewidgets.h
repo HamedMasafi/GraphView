@@ -7,15 +7,19 @@
 namespace GraphView {
 
 class ScenePrivate;
+
 class Scene;
+namespace Widgets {
 class AbstractWidget;
+}
+namespace Commands {
 
 struct WidgetChangeData;
 
-class AbstractAddRemoveWidgetsCommand: public QUndoCommand
+class AbstractAddRemoveWidgets: public QUndoCommand
 {
 public:
-    AbstractAddRemoveWidgetsCommand(ScenePrivate *sceneData);
+    AbstractAddRemoveWidgets(ScenePrivate *sceneData);
 protected:
     void createAll() ;
     void removeAll();
@@ -24,10 +28,10 @@ protected:
     QList<WidgetChangeData *> _data;
 };
 
-class AddWidgetsCommand : public AbstractAddRemoveWidgetsCommand
+class AddWidgets : public AbstractAddRemoveWidgets
 {
 public:
-    using AbstractAddRemoveWidgetsCommand::AbstractAddRemoveWidgetsCommand;
+    using AbstractAddRemoveWidgets::AbstractAddRemoveWidgets;
 
     void add(const QString &className,
              const QRectF &rect,
@@ -38,4 +42,5 @@ public:
     void redo() override;
 };
 
+} // namespace Commands
 } // namespace GraphView

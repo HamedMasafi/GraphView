@@ -2,14 +2,15 @@
 
 #include "abstracttool.h"
 
-namespace GraphView {
+namespace GraphView::Tools {
 
-class MoveWidgetsByArrowKeysTool : public AbstractTool
+
+class MoveWidgetsByArrowKeys : public AbstractTool
 {
     Q_OBJECT
 
 public:
-    MoveWidgetsByArrowKeysTool(Scene *scene);
+    MoveWidgetsByArrowKeys(Scene *scene);
     QString text() const override;
     ToolType toolType() const override;
 

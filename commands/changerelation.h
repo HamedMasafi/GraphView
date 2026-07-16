@@ -6,23 +6,30 @@
 namespace GraphView
 {
 class Scene;
-class RelationWidget;
-class ConnectionHandle;
 
-class ChangeRelationCommand : public QUndoCommand
+namespace Widgets
+{
+class Relation;
+class ConnectionHandle;
+}
+namespace Commands
+{
+
+class ChangeRelation : public QUndoCommand
 {
 public:
-    ChangeRelationCommand(Scene *scene, RelationWidget *relation, ConnectionHandle *oldHandle, ConnectionHandle *newHandle);
+    ChangeRelation(Scene *scene, Widgets::Relation *relation, Widgets::ConnectionHandle *oldHandle, Widgets::ConnectionHandle *newHandle);
 
     void undo() override;
     void redo() override;
 
 private:
     Scene *_scene;
-    RelationWidget *_relation;
-    ConnectionHandle *_oldHandle;
-    ConnectionHandle *_newHandle;
-    MultiLineF _oldPoly;
+    Widgets::Relation *_relation;
+    Widgets::ConnectionHandle *_oldHandle;
+    Widgets::ConnectionHandle *_newHandle;
+    Widgets::MultiLineF _oldPoly;
 };
 
+}
 }

@@ -4,7 +4,7 @@
 
 #include <QString>
 
-namespace GraphView {
+namespace Data {
 
 class FunctionData : public AbstractData
 {
@@ -26,4 +26,4 @@ private:
     QString _name;
 };
 
-} // namespace GraphView
+} // namespace Data

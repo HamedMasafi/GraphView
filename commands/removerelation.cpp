@@ -5,8 +5,9 @@
 
 namespace GraphView
 {
-
-RemoveRelationCommand::RemoveRelationCommand(Scene *scene, RelationWidget *relation)
+namespace Commands
+{
+RemoveRelation::RemoveRelation(Scene *scene, Widgets::Relation *relation)
     : QUndoCommand{}
     , _scene(scene)
     , _relation(relation)
@@ -14,7 +15,7 @@ RemoveRelationCommand::RemoveRelationCommand(Scene *scene, RelationWidget *relat
     setText("Remove relation");
 }
 
-void RemoveRelationCommand::undo()
+void RemoveRelation::undo()
 {
     if (_relation->from().handle())
         _relation->from().handle()->setRelation(_relation);
@@ -23,7 +24,7 @@ void RemoveRelationCommand::undo()
     _scene->addRelation(_relation);
 }
 
-void RemoveRelationCommand::redo()
+void RemoveRelation::redo()
 {
     _scene->removeRelation(_relation);
     if (_relation->from().handle())
@@ -31,5 +32,5 @@ void RemoveRelationCommand::redo()
     if (_relation->to().handle())
         _relation->to().handle()->setRelation(nullptr);
 }
-
+}
 }

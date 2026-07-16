@@ -4,27 +4,27 @@
 #include <QGraphicsRectItem>
 #include <QGraphicsSceneMouseEvent>
 
-namespace GraphView{
+namespace GraphView::Tools{
 
-MagnifierTool::MagnifierTool(Scene *scene)
+Magnifier::Magnifier(Scene *scene)
     : AbstractTool{scene}
 {
     _zoomArea = scene->addRect(0, 0, 0, 0);
     _zoomArea->setPen(QPen{Qt::blue, 1, Qt::DotLine});
 }
 
-void MagnifierTool::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
+void Magnifier::mousePressed(QGraphicsSceneMouseEvent *mouseEvent)
 {
     _clickPos = mouseEvent->scenePos();
     _zoomArea->setRect(QRectF{_clickPos, QSizeF{0, 0}});
 }
 
-void MagnifierTool::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
+void Magnifier::mouseMoved(QGraphicsSceneMouseEvent *mouseEvent)
 {
     _zoomArea->setRect(QRectF{_clickPos, mouseEvent->scenePos() - _clickPos});
 }
 
-void MagnifierTool::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
+void Magnifier::mouseReleased(QGraphicsSceneMouseEvent *mouseEvent)
 {
     Q_UNUSED(mouseEvent)
     _zoomArea->hide();

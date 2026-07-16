@@ -3,7 +3,7 @@
 #include <QRectF>
 
 class QPainter;
-namespace GraphView
+namespace GraphView::Core
 {
 
 void paintArrow(QPainter *painter, Qt::Edge direction, const QRectF &rc);

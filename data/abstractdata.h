@@ -2,7 +2,7 @@
 
 #include <QObject>
 
-namespace GraphView {
+namespace Data {
 class AbstractData : public QObject
 {
     Q_OBJECT
@@ -23,4 +23,4 @@ private:
     Type _type;
 };
 
-} // namespace GraphView
+} // namespace Data

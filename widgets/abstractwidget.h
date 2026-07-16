@@ -10,13 +10,18 @@ class QGraphicsLinearLayout;
 namespace GraphView {
 
 class ScenePrivate;
-class AddWidgetCommand;
+
+namespace Commands {
+class AddWidget;
+}
+
 class Scene;
-
-class ConnectionHandleWidget;
-
+namespace Core {
 class MoveEvent;
 class ResizeEvent;
+} // namespace Core
+namespace Widgets {
+class ConnectionHandle;
 
 class AbstractWidget : public QGraphicsObject
 {
@@ -88,8 +93,8 @@ Q_SIGNALS:
     void selectedChanged();
     void doubleClicked();
     void moved(QPointF lastPos);
-    void moving(MoveEvent *);
-    void resizing(ResizeEvent *);
+    void moving(GraphView::Core::MoveEvent *);
+    void resizing(GraphView::Core::ResizeEvent *);
 
     void minimumSizeChanged();
 
@@ -116,7 +121,8 @@ private:
     WidgetResizeMode _resizeMode;
 
     friend class GraphView::ScenePrivate;
-    friend class AddWidgetCommand;
+    friend class Commands::AddWidget;
 };
 
+} // namespace Widgets
 } // namespace GraphView
