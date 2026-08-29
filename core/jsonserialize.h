@@ -45,6 +45,8 @@
 #include <QUuid>
 #include <QVariant>
 
+#include <type_traits>
+
 static const char *TYPE_KEY = "T";
 static const char *TYPE_VALUE = "V";
 
@@ -135,7 +137,6 @@ DECLARE_CONVERTER(QByteArrayList)
 DECLARE_CONVERTER(QBrush)
 DECLARE_CONVERTER(QPalette)
 DECLARE_CONVERTER(QPen)
-DECLARE_CONVERTER(QPen)
 DECLARE_CONVERTER(QBitmap)
 DECLARE_CONVERTER(QKeySequence)
 DECLARE_CONVERTER(QTextFormat)
@@ -146,6 +147,41 @@ using QStringMap = QMap<QString, QString>;
 DECLARE_CONVERTER(QStringMap)
 
 // clang-format on
+
+template<typename T, typename V>
+QJsonValue toJson(const QPair<T, V> &v)
+{
+    return QJsonObject{{"first", toJson(v.first)}, {"second", toJson(v.second)}};
+}
+
+template<typename T, typename V>
+QPair<T, V> fromJson(const QJsonValue &v)
+{
+    auto o = v.toObject();
+    return qMakePair(fromJson<T>(o["first"]), fromJson<V>(o["second"]));
+}
+
+// template<typename T>
+// QJsonValue toJson(const QMap<QString, T> &v)
+// {
+    // QJsonObject a;
+    // for (auto i = v.begin(); i != v.end(); ++i) {
+    //     a[i.key()] = toJson<T>(i.value());
+    // }
+    // return a;
+// }
+
+// template<typename T>
+// QMap<QString, T> fromJson2(const QJsonValue &v)
+// {
+//     QMap<QString, T> map;
+//     auto o = v.toObject();
+
+//     for (auto n = o.begin(); n != o.end(); ++n) {
+//         map[n.key()] = fromJson<T>(n.value());
+//     }
+//     return map;
+// }
 
 template<typename T>
 QJsonObject pack(const T &value)
@@ -190,7 +226,7 @@ template<class T>
 QList<T *> jsonToObjects(const QJsonArray &arr)
 {
     QList<T *> list;
-    for (auto v : arr) {
+    for (const auto &v : arr) {
         if (!v.isObject())
             continue;
         auto item = new T;
@@ -213,7 +249,7 @@ template<class T>
 QList<T *> jsonToGadgets(const QJsonArray &arr)
 {
     QList<T *> list;
-    for (auto v : arr) {
+    for (const auto &v : arr) {
         if (!v.isObject())
             continue;
         auto item = new T;
@@ -223,6 +259,158 @@ QList<T *> jsonToGadgets(const QJsonArray &arr)
     return list;
 }
 
-// void registerBasicConverters();
+
+
+template<typename T>
+struct IsQList : std::false_type {};
+
+template<typename T>
+struct IsQList<QList<T>> : std::true_type
+{
+    using ValueType = T;
+};
+
+
+// ------------------------------------------------------------
+// QPair<QString, T>
+// ------------------------------------------------------------
+
+template<typename T>
+struct IsQStringPair : std::false_type {};
+
+template<typename T>
+struct IsQStringPair<QPair<QString, T>> : std::true_type
+{
+    using ValueType = T;
+};
+
+
+// ------------------------------------------------------------
+// QMap<QString, T>
+// ------------------------------------------------------------
+
+template<typename T>
+struct IsQStringMap : std::false_type {};
+
+template<typename T>
+struct IsQStringMap<QMap<QString, T>> : std::true_type
+{
+    using ValueType = T;
+};
+
+
+// ------------------------------------------------------------
+// Has staticMetaObject
+// ------------------------------------------------------------
+
+template<typename T, typename = void>
+struct HasStaticMetaObject : std::false_type {};
+
+template<typename T>
+struct HasStaticMetaObject<T, std::void_t<decltype(T::staticMetaObject)>>
+    : std::true_type
+{};
+
+template<typename T>
+struct IsSupportedType : std::false_type {};
+
+// cland-format off
+template<> struct IsSupportedType<bool>:std::true_type{};
+template<> struct IsSupportedType<int>:std::true_type{};
+template<> struct IsSupportedType<double >:std::true_type{};
+template<> struct IsSupportedType<uint>:std::true_type{};
+template<> struct IsSupportedType<qint64>:std::true_type{};
+template<> struct IsSupportedType<quint64>:std::true_type{};
+template<> struct IsSupportedType<long>:std::true_type{};
+template<> struct IsSupportedType<short>:std::true_type{};
+template<> struct IsSupportedType<char>:std::true_type{};
+template<> struct IsSupportedType<ulong>:std::true_type{};
+template<> struct IsSupportedType<ushort>:std::true_type{};
+template<> struct IsSupportedType<uchar>:std::true_type{};
+template<> struct IsSupportedType<float>:std::true_type{};
+template<> struct IsSupportedType<signed char>:std::true_type{};
+template<> struct IsSupportedType<QChar>:std::true_type{};
+template<> struct IsSupportedType<QString>:std::true_type{};
+template<> struct IsSupportedType<QStringList>:std::true_type{};
+template<> struct IsSupportedType<QByteArray>:std::true_type{};
+template<> struct IsSupportedType<QDate>:std::true_type{};
+template<> struct IsSupportedType<QTime>:std::true_type{};
+template<> struct IsSupportedType<QDateTime>:std::true_type{};
+template<> struct IsSupportedType<QUrl>:std::true_type{};
+template<> struct IsSupportedType<QPoint>:std::true_type{};
+template<> struct IsSupportedType<QPointF>:std::true_type{};
+template<> struct IsSupportedType<QSize>:std::true_type{};
+template<> struct IsSupportedType<QSizeF>:std::true_type{};
+template<> struct IsSupportedType<QRect>:std::true_type{};
+template<> struct IsSupportedType<QRectF>:std::true_type{};
+template<> struct IsSupportedType<QLine>:std::true_type{};
+template<> struct IsSupportedType<QLineF>:std::true_type{};
+template<> struct IsSupportedType<QUuid>:std::true_type{};
+template<> struct IsSupportedType<QColor>:std::true_type{};
+template<> struct IsSupportedType<QPolygon>:std::true_type{};
+template<> struct IsSupportedType<QPolygonF>:std::true_type{};
+template<> struct IsSupportedType<QBitArray>:std::true_type{};
+template<> struct IsSupportedType<QImage>:std::true_type{};
+template<> struct IsSupportedType<QPixmap>:std::true_type{};
+template<> struct IsSupportedType<QIcon>:std::true_type{};
+template<> struct IsSupportedType<QRegion>:std::true_type{};
+template<> struct IsSupportedType<QFont>:std::true_type{};
+template<> struct IsSupportedType<QRegularExpression>:std::true_type{};
+template<> struct IsSupportedType<QByteArrayList>:std::true_type{};
+template<> struct IsSupportedType<QBrush>:std::true_type{};
+template<> struct IsSupportedType<QPalette>:std::true_type{};
+template<> struct IsSupportedType<QPen>:std::true_type{};
+template<> struct IsSupportedType<QBitmap>:std::true_type{};
+template<> struct IsSupportedType<QKeySequence>:std::true_type{};
+template<> struct IsSupportedType<QTextFormat>:std::true_type{};
+template<> struct IsSupportedType<QTransform>:std::true_type{};
+template<> struct IsSupportedType<QColorSpace>:std::true_type{};
+template<> struct IsSupportedType<QEasingCurve>:std::true_type{};
+// cland-format off
+
+// ------------------------------------------------------------
+// toJson
+// ------------------------------------------------------------
+
+template<typename T>
+QJsonValue convertToJson(const T &v)
+{
+    using U = std::remove_cv_t<std::remove_reference_t<T>>;
+
+    if constexpr (IsSupportedType<U>::value) {
+        return toJson(v);
+    } else if constexpr (std::is_base_of_v<QObject, U>) {
+        return objectToJson(v);
+    } else if constexpr (HasStaticMetaObject<U>::value) {
+        const QMetaObject *metaObject = &U::staticMetaObject;
+        return gadgetToJson(v, metaObject);
+    } else if constexpr (IsQList<U>::value) {
+        QJsonArray result;
+
+        for (const auto &item : v)
+            result.append(convertToJson(item));
+
+        return result;
+
+    } else if constexpr (IsQStringPair<U>::value) {
+        QJsonObject result;
+        result.insert(v.first, convertToJson(v.second));
+
+        return result;
+
+    } else if constexpr (IsQStringMap<U>::value) {
+        QJsonObject result;
+
+        for (auto it = v.cbegin(); it != v.cend(); ++it)
+            result.insert(it.key(), convertToJson(it.value()));
+
+        return result;
+
+    } else {
+        return QJsonValue::fromVariant(QVariant::fromValue(v));
+    }
+}
 
 } // namespace GraphView::Core
+
+
